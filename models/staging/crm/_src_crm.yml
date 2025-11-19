@@ -1,0 +1,10 @@
+sources:
+  - name: crm
+    database: zi-case-study
+    schema: crm_customer_accounts
+    tables:
+      - name: accounts
+      - name: headcount
+      - name: locations
+      - name: matches
+      - name: urls
