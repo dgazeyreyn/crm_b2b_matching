@@ -1,9 +1,0 @@
-sources:
-  - name: companies
-    database: zi-case-study
-    schema: zi_companies
-    tables:
-      - name: companies
-      - name: headcount
-      - name: locations
-      - name: urls
