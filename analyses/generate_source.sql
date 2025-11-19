@@ -1,1 +1,1 @@
-{{ codegen.generate_source(schema_name= 'internal_research', database_name= 'zi-case-study') }}
+{{ codegen.generate_source(schema_name= 'zi_companies', database_name= 'zi-case-study') }}

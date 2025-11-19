@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: zi_companies
+    tables:
+      - name: companies
+      - name: headcount
+      - name: locations
+      - name: urls
