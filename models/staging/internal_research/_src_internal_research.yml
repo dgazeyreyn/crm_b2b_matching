@@ -1,0 +1,6 @@
+sources:
+  - name: validation
+    database: zi-case-study
+    schema: internal_research
+    tables:
+      - name: manual_validation_sample
