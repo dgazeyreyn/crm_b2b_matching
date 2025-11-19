@@ -1,0 +1,6 @@
+version: 2
+
+sources:
+  - name: internal_research
+    tables:
+      - name: manual_validation_sample
