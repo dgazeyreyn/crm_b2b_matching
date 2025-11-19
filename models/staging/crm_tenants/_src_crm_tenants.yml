@@ -1,0 +1,10 @@
+sources:
+  - name: tenants
+    database: zi-case-study
+    schema: crm_tenants
+    tables:
+      - name: annual_contract_value
+      - name: data_quality_nps
+      - name: industries
+      - name: segments
+      - name: tenants
