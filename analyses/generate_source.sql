@@ -1,0 +1,1 @@
+{{ codegen.generate_source(schema_name= 'crm_customer_accounts', database_name= 'zi-case-study') }}

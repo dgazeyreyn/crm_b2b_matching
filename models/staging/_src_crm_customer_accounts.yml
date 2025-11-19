@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: crm_customer_accounts
+    tables:
+      - name: accounts
+      - name: headcount
+      - name: locations
+      - name: matches
+      - name: urls
