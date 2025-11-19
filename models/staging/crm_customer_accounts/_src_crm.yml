@@ -1,5 +1,5 @@
 sources:
-  - name: crm
+  - name: accounts
     database: zi-case-study
     schema: crm_customer_accounts
     tables:
