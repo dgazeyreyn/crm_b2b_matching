@@ -1,7 +1,7 @@
+version: 2
+
 sources:
-  - name: companies
-    database: zi-case-study
-    schema: zi_companies
+  - name: zi_companies
     tables:
       - name: companies
       - name: headcount

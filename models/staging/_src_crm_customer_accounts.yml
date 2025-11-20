@@ -1,7 +1,7 @@
+version: 2
+
 sources:
-  - name: accounts
-    database: zi-case-study
-    schema: crm_customer_accounts
+  - name: crm_customer_accounts
     tables:
       - name: accounts
       - name: headcount

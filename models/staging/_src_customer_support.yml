@@ -1,7 +1,7 @@
+version: 2
+
 sources:
-  - name: support
-    database: zi-case-study
-    schema: customer_support
+  - name: customer_support
     tables:
       - name: feedback_themes
       - name: frequency

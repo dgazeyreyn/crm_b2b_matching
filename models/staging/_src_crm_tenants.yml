@@ -1,7 +1,7 @@
+version: 2
+
 sources:
-  - name: tenants
-    database: zi-case-study
-    schema: crm_tenants
+  - name: crm_tenants
     tables:
       - name: annual_contract_value
       - name: data_quality_nps
