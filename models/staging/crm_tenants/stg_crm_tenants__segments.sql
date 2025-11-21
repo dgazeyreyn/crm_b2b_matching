@@ -8,7 +8,7 @@ renamed as (
 
     select
         tenant_id,
-        segments
+        customer_segment
 
     from source
 
