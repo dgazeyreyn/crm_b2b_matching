@@ -1,0 +1,35 @@
+models:
+  - name: stg_crm_customer_accounts__accounts
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_crm_customer_accounts__locations
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_crm_customer_accounts__matches
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_crm_customer_accounts_headcount
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_crm_customer_accounts_urls
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
