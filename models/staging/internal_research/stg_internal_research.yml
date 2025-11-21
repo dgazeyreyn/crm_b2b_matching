@@ -1,0 +1,7 @@
+models:
+  - name: stg_internal_research__manual_validation_sample
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
