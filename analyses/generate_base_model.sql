@@ -1,5 +1,5 @@
 {{ codegen.generate_base_model(
-    source_name='customer_support',
-    table_name='tickets',
+    source_name='internal_research',
+    table_name='manual_validation_sample',
     materialized='table'
 ) }}
