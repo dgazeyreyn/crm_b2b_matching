@@ -1,12 +1,12 @@
 models:
-  - name: stg_crm_customer_accounts__ticket_dates
+  - name: stg_crm_customer_support__ticket_dates
     columns:
       - name: ticket_id
         data_tests:
           - unique
           - not_null
 
-  - name: stg_crm_customer_accounts__tickets
+  - name: stg_crm_customer_support__tickets
     columns:
       - name: ticket_id
         data_tests:
