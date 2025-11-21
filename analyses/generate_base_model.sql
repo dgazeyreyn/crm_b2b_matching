@@ -1,5 +1,5 @@
 {{ codegen.generate_base_model(
-    source_name='internal_research',
-    table_name='manual_validation_sample',
+    source_name='zi_companies',
+    table_name='urls',
     materialized='table'
 ) }}
