@@ -1,5 +1,5 @@
 {{ codegen.generate_base_model(
     source_name='zi_companies',
-    table_name='locations',
+    table_name='urls',
     materialized='table'
 ) }}
