@@ -7,13 +7,8 @@ with source as (
 renamed as (
 
     select
-        tenant_id,
-        customer_segment,
-        feedback_theme,
-        frequency,
-        avg_severity,
-        ticket_date,
-        resolution_days
+        id as ticket_id,
+        feedback_theme
 
     from source
 

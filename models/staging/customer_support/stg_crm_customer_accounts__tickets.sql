@@ -7,7 +7,7 @@ with source as (
 renamed as (
 
     select
-        id,
+        id as ticket_id,
         tenant_id
 
     from source
