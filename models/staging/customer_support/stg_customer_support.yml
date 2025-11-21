@@ -1,0 +1,42 @@
+models:
+  - name: stg_crm_customer_accounts__ticket_dates
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_crm_customer_accounts__tickets
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_customer_support__feedback_themes
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_customer_support__frequency
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_customer_support__resolution_days
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_customer_support__severity
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null

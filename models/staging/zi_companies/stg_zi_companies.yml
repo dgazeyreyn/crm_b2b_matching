@@ -1,0 +1,28 @@
+models:
+  - name: stg_zi_companies__urls
+    columns:
+      - name: zi_company_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_zi_companies__locations
+    columns:
+      - name: zi_company_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_zi_companies__headcount
+    columns:
+      - name: zi_company_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_zi_companies__companies
+    columns:
+      - name: zi_company_id
+        data_tests:
+          - unique
+          - not_null

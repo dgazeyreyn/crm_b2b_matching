@@ -7,7 +7,7 @@ with source as (
 renamed as (
 
     select
-        id,
+        id as ticket_id,
         resolution_days
 
     from source
