@@ -19,6 +19,16 @@ models:
         data_tests:
           - unique
           - not_null
+      - name: feedback_theme
+        data_tests:
+          - accepted_values:
+              values:
+               - data_completeness
+               - match_accuracy
+               - no_match_found
+               - outdated_company_info
+               - poor_data_quality
+               - wrong_company_matched
 
   - name: stg_customer_support__frequency
     columns:
