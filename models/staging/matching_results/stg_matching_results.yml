@@ -1,0 +1,7 @@
+models:
+  - name: stg_matching_results__zi_company_id
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
