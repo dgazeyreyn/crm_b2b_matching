@@ -21,13 +21,10 @@ algo_ver as (
 final as (
 
 select
-    tickets.tenant_id,
-    segments.customer_segment,
-    themes.feedback_theme,
-    frequency.frequency,
-    severity.avg_severity,
-    dates.ticket_date,
-    res_days.resolution_days
+    matches.*,
+    confidence.match_confidence_score,
+    dates.match_date,
+    algo_ver.algorithm_version
 from matches
 join confidence on confidence.crm_account_id = matches.crm_account_id
 join dates on dates.crm_account_id = matches.crm_account_id
