@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: matching_results
+    tables:
+      - name: algorithm_version
+      - name: match_confidence_score
+      - name: match_date
+      - name: zi_company_id
