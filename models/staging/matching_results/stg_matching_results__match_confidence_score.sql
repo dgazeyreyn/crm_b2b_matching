@@ -1,6 +1,6 @@
 with source as (
 
-    select * from {{ source('matching_results', 'algorithm_version') }}
+    select * from {{ source('matching_results', 'match_confidence_score') }}
 
 ),
 
@@ -8,7 +8,7 @@ renamed as (
 
     select
         crm_account_id,
-        algorithm_version
+        match_confidence_score
 
     from source
 
