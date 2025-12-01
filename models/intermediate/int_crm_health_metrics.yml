@@ -1,0 +1,14 @@
+models:
+  - name: int_crm_health_metrics
+    columns:
+      - name: tenant_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_segment
+        data_tests:
+          - accepted_values:
+              values:
+               - ENT
+               - MM
+               - SMB
