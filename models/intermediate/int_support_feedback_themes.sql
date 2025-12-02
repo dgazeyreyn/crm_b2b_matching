@@ -39,10 +39,10 @@ select
     tickets.tenant_id,
     segments.customer_segment,
     themes.feedback_theme,
-    frequency.frequency,
-    severity.avg_severity,
     dates.ticket_date,
-    res_days.resolution_days
+    sum(frequency.frequency) as frequency,
+    avg(severity.avg_severity) as severity,
+    sum(res_days.resolution_days) as resolution_days
 from tickets
 join segments on segments.tenant_id = tickets.tenant_id
 join themes on themes.ticket_id = tickets.ticket_id
@@ -50,7 +50,11 @@ join frequency on frequency.ticket_id = tickets.ticket_id
 join severity on severity.ticket_id = tickets.ticket_id
 join dates on dates.ticket_id = tickets.ticket_id
 join res_days on res_days.ticket_id = tickets.ticket_id
-
+group by
+    tickets.tenant_id,
+    segments.customer_segment,
+    themes.feedback_theme,
+    dates.ticket_date
 )
 
 select
