@@ -1,5 +1,5 @@
 models:
-  - name: int_support_feedback_themes
+  - name: support_feedback_themes
     columns:
       - name: primary_key
         data_tests:

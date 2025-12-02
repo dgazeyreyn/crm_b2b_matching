@@ -1,5 +1,5 @@
 models:
-  - name: int_crm_health_metrics
+  - name: customer_health_metrics
     columns:
       - name: tenant_id
         data_tests:
