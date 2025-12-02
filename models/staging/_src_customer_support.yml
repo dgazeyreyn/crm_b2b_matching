@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: customer_support
+    description: Categorized themes from customer support interactions
     tables:
       - name: feedback_themes
       - name: frequency
