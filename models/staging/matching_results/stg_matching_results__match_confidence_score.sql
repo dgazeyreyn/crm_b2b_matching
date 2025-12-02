@@ -1,17 +1,11 @@
-with source as (
+with
+    source as (
 
-    select * from {{ source('matching_results', 'match_confidence_score') }}
+        select * from {{ source("matching_results", "match_confidence_score") }}
 
-),
+    ),
 
-renamed as (
+    renamed as (select crm_account_id, match_confidence_score from source)
 
-    select
-        crm_account_id,
-        match_confidence_score
-
-    from source
-
-)
-
-select * from renamed
+select *
+from renamed

@@ -2,8 +2,10 @@ version: 2
 
 sources:
   - name: crm_customer_accounts
+    description: CRM company records for a sample of tenants
     tables:
       - name: accounts
+        description: Our tenants’ customers are referred to as CRM accounts for the purposes of this exercise
       - name: headcount
       - name: locations
       - name: matches

@@ -1,0 +1,7 @@
+models:
+  - name: crm_account_id
+    columns:
+      - name: primary_key
+        data_tests:
+          - unique
+          - not_null

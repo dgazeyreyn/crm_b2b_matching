@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: matching_results
+    description: Outputs of the matching between CRM record and ZI data. Included is a confidence score that shows the match confidence (0-100)
     tables:
       - name: algorithm_version
       - name: match_confidence_score

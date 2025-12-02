@@ -1,17 +1,7 @@
-with source as (
+with
+    source as (select * from {{ source("zi_companies", "urls") }}),
 
-    select * from {{ source('zi_companies', 'urls') }}
+    renamed as (select zi_company_id, zi_company_url from source)
 
-),
-
-renamed as (
-
-    select
-        zi_company_id,
-        zi_company_url
-
-    from source
-
-)
-
-select * from renamed
+select *
+from renamed
