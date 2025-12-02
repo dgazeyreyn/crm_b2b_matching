@@ -1,17 +1,7 @@
-with source as (
+with
+    source as (select * from {{ source("customer_support", "tickets") }}),
 
-    select * from {{ source('customer_support', 'tickets') }}
+    renamed as (select id as ticket_id, tenant_id from source)
 
-),
-
-renamed as (
-
-    select
-        id as ticket_id,
-        tenant_id
-
-    from source
-
-)
-
-select * from renamed
+select *
+from renamed

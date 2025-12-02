@@ -1,17 +1,7 @@
-with source as (
+with
+    source as (select * from {{ source("customer_support", "severity") }}),
 
-    select * from {{ source('customer_support', 'severity') }}
+    renamed as (select id as ticket_id, avg_severity from source)
 
-),
-
-renamed as (
-
-    select
-        id as ticket_id,
-        avg_severity
-
-    from source
-
-)
-
-select * from renamed
+select *
+from renamed
