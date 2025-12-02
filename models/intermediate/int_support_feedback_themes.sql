@@ -1,64 +1,46 @@
-with tickets as (
+with
+    tickets as (select * from {{ ref("stg_customer_support__tickets") }}),
 
-    select * from {{ ref('stg_customer_support__tickets') }}
-),
+    segments as (select * from {{ ref("stg_crm_tenants__segments") }}),
 
-segments as (
+    themes as (select * from {{ ref("stg_customer_support__feedback_themes") }}),
 
-    select * from {{ ref('stg_crm_tenants__segments') }}
-),
+    frequency as (select * from {{ ref("stg_customer_support__frequency") }}),
 
-themes as (
+    severity as (select * from {{ ref("stg_customer_support__severity") }}),
 
-    select * from {{ ref('stg_customer_support__feedback_themes') }}
-),
+    dates as (select * from {{ ref("stg_customer_support__ticket_dates") }}),
 
-frequency as (
+    res_days as (select * from {{ ref("stg_customer_support__resolution_days") }}),
 
-    select * from {{ ref('stg_customer_support__frequency') }}
-),
+    final as (
 
-severity as (
-
-    select * from {{ ref('stg_customer_support__severity') }}
-),
-
-dates as (
-
-    select * from {{ ref('stg_customer_support__ticket_dates') }}
-),
-
-res_days as (
-
-    select * from {{ ref('stg_customer_support__resolution_days') }}
-),
-
-final as (
-
-select
-    tickets.tenant_id,
-    segments.customer_segment,
-    themes.feedback_theme,
-    dates.ticket_date,
-    sum(frequency.frequency) as frequency,
-    avg(severity.avg_severity) as severity,
-    sum(res_days.resolution_days) as resolution_days
-from tickets
-join segments on segments.tenant_id = tickets.tenant_id
-join themes on themes.ticket_id = tickets.ticket_id
-join frequency on frequency.ticket_id = tickets.ticket_id
-join severity on severity.ticket_id = tickets.ticket_id
-join dates on dates.ticket_id = tickets.ticket_id
-join res_days on res_days.ticket_id = tickets.ticket_id
-group by
-    tickets.tenant_id,
-    segments.customer_segment,
-    themes.feedback_theme,
-    dates.ticket_date
-)
+        select
+            tickets.tenant_id,
+            segments.customer_segment,
+            themes.feedback_theme,
+            dates.ticket_date,
+            sum(frequency.frequency) as frequency,
+            avg(severity.avg_severity) as severity,
+            sum(res_days.resolution_days) as resolution_days
+        from tickets
+        join segments on segments.tenant_id = tickets.tenant_id
+        join themes on themes.ticket_id = tickets.ticket_id
+        join frequency on frequency.ticket_id = tickets.ticket_id
+        join severity on severity.ticket_id = tickets.ticket_id
+        join dates on dates.ticket_id = tickets.ticket_id
+        join res_days on res_days.ticket_id = tickets.ticket_id
+        group by
+            tickets.tenant_id,
+            segments.customer_segment,
+            themes.feedback_theme,
+            dates.ticket_date
+    )
 
 select
-    {{ dbt_utils.generate_surrogate_key(['tenant_id', 'feedback_theme', 'ticket_date']) }} as primary_key,
-    *  
-from
-    final
+    {{
+        dbt_utils.generate_surrogate_key(
+            ["tenant_id", "feedback_theme", "ticket_date"]
+        )
+    }} as primary_key, *
+from final
