@@ -54,7 +54,7 @@ join res_days on res_days.ticket_id = tickets.ticket_id
 )
 
 select
-    {{ dbt_utils.generate_surrogate_key(['tenant_id', 'ticket_date']) }} as primary_key,
+    {{ dbt_utils.generate_surrogate_key(['tenant_id', 'feedback_theme', 'ticket_date']) }} as primary_key,
     *  
 from
     final
