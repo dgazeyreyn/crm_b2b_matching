@@ -8,6 +8,7 @@ models:
       - name: manual_validation_result
         data_tests:
           - accepted_values:
-              values:
-               - CORRECT
-               - INCORRECT
+              arguments:
+                values:
+                  - CORRECT
+                  - INCORRECT

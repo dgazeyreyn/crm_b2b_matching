@@ -29,10 +29,11 @@ models:
       - name: customer_segment
         data_tests:
           - accepted_values:
-              values:
-               - ENT
-               - MM
-               - SMB
+              arguments:
+                values:
+                  - ENT
+                  - MM
+                  - SMB
 
   - name: stg_crm_tenants__tenants
     columns:
