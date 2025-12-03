@@ -1,5 +1,5 @@
 models:
-  - name: support_feedback_themes
+  - name: fact_support_tickets
     columns:
       - name: primary_key
         data_tests:
