@@ -1,7 +1,0 @@
-models:
-  - name: int_crm_customer_accounts
-    columns:
-      - name: crm_account_id
-        data_tests:
-          - unique
-          - not_null

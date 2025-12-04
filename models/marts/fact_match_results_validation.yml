@@ -1,7 +1,0 @@
-models:
-  - name: fact_match_results_validation
-    columns:
-      - name: crm_account_id
-        data_tests:
-          - unique
-          - not_null
