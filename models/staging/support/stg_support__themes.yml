@@ -1,7 +1,7 @@
 models:
   - name: stg_support__themes
     columns:
-      - name: ticket_id
+      - name: primary_key
         data_tests:
           - unique
           - not_null
