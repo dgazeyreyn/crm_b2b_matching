@@ -1,5 +1,5 @@
 models:
-  - name: stg_support__support_feedback_themes
+  - name: stg_support__themes
     columns:
       - name: ticket_id
         data_tests:

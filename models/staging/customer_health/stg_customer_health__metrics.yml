@@ -1,5 +1,5 @@
 models:
-  - name: stg_customer_health__customer_health_metrics
+  - name: stg_customer_health__metrics
     columns:
       - name: tenant_id
         data_tests:

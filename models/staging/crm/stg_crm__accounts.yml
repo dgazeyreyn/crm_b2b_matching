@@ -1,5 +1,5 @@
 models:
-  - name: stg_crm__customer_crm_accounts
+  - name: stg_crm__accounts
     columns:
       - name: crm_account_id
         data_tests:

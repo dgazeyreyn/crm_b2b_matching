@@ -1,7 +1,24 @@
-with
-    source as (select * from {{ source("crm", "accounts") }}),
+with source as (
 
-    renamed as (select crm_account_id, crm_account_name, tenant_id from source)
+    select * from {{ source('crm', 'accounts') }}
 
-select *
-from renamed
+),
+
+renamed as (
+
+    select
+        tenant_id,
+        tenant_company_name,
+        crm_account_id,
+        crm_account_name,
+        crm_account_url,
+        crm_account_country,
+        crm_account_region,
+        crm_account_headcount,
+        matched_crm_zi_company_id
+
+    from source
+
+)
+
+select * from renamed
