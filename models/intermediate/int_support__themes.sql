@@ -23,7 +23,7 @@ with
                 dbt_utils.generate_surrogate_key(
                     ["tenant_id", "feedback_theme", "ticket_date"]
                 )
-            }} as primary_key, *
+            }} as ticket_id, *
         from dedupe
     )
 
