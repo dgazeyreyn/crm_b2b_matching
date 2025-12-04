@@ -1,5 +1,5 @@
 with
-    source as (select * from {{ source("crm_tenants", "annual_contract_value") }}),
+    source as (select * from {{ source("customer_health", "customer_health_metrics") }}),
 
     renamed as (select tenant_id, annual_contract_value from source)
 

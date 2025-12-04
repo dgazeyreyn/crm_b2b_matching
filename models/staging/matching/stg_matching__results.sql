@@ -1,7 +1,7 @@
 with
     source as (
 
-        select * from {{ source("internal_research", "manual_validation_sample") }}
+        select * from {{ source("matching", "results") }}
 
     ),
 

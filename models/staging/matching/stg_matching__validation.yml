@@ -1,5 +1,5 @@
 models:
-  - name: stg_internal_research__manual_validation_sample
+  - name: stg_matching__validation
     columns:
       - name: crm_account_id
         data_tests:
