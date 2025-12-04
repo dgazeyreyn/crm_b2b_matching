@@ -14,8 +14,7 @@ renamed as (
         crm_account_url,
         crm_account_country,
         crm_account_region,
-        crm_account_headcount,
-        matched_crm_zi_company_id
+        crm_account_headcount
 
     from source
 
