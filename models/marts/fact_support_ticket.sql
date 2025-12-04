@@ -1,6 +1,6 @@
 -- models/marts/fact_support_ticket.sql
 with
-    src as (select * from {{ ref("int_support__themes") }}),
+    src as (select * from {{ ref("int_support_ticket") }}),
 
     theme as (select * from {{ ref("dim_feedback_theme") }}),
 

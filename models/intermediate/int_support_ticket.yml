@@ -1,7 +1,7 @@
 models:
-  - name: int_support__themes
+  - name: int_support_ticket
     columns:
-      - name: primary_key
+      - name: ticket_id
         data_tests:
           - unique
           - not_null
