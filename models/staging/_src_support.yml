@@ -1,12 +1,7 @@
 version: 2
 
 sources:
-  - name: customer_support
+  - name: support
     description: Categorized themes from customer support interactions
     tables:
-      - name: feedback_themes
-      - name: frequency
-      - name: resolution_days
-      - name: severity
-      - name: ticket_dates
-      - name: tickets
+      - name: support_feedback_themes

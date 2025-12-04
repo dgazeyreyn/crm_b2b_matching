@@ -1,7 +1,0 @@
-version: 2
-
-sources:
-  - name: internal_research
-    description: Results from ZoomInfo's internal research team, which periodically conducts manual validation of algorithm matches through independent verification methods to assess actual matching accuracy
-    tables:
-      - name: manual_validation_sample
