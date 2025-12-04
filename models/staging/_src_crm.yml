@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: crm
+    description: CRM company records for a sample of tenants
+    tables:
+      - name: customer_crm_accounts
+        description: Our tenants’ customers are referred to as CRM accounts for the purposes of this exercise

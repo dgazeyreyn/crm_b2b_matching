@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: customer_health
+    description: Customer satisfaction and business metrics along with the Net Promoter Score (NPS) which ranges from lowest to highest 0-10 (measures satisfaction)
+    tables:
+      - name: customer_health_metrics

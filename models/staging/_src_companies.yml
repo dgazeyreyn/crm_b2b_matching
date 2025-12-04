@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: companies
+    description: The dataset of companies pulled from ZI's database
+    tables:
+      - name: companies
