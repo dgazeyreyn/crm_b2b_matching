@@ -1,4 +1,4 @@
--- models/dim/dim_feedback_theme.sql
+-- models/marts/dim_feedback_theme.sql
 with
     src as (select * from {{ ref("stg_support__themes") }}),
 

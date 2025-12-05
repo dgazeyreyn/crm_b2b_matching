@@ -1,0 +1,18 @@
+models:
+  - name: dim_feedback_theme
+    columns:
+      - name: feedback_theme_key
+        data_tests:
+          - unique
+          - not_null
+      - name: feedback_theme
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - outdated_company_info
+                  - poor_data_quality
+                  - wrong_company_matched
+                  - match_accuracy
+                  - data_completeness
+                  - no_match_found

@@ -1,0 +1,7 @@
+models:
+  - name: fact_support_ticket
+    columns:
+      - name: ticket_id
+        data_tests:
+          - unique
+          - not_null

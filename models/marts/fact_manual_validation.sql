@@ -1,5 +1,6 @@
+-- models/marts/fact_manual_validation.sql
 with
-    qa as (select * from {{ ref("stg_matching__validation") }}),
+    src as (select * from {{ ref("stg_matching__validation") }}),
 
     final as (
 
@@ -11,7 +12,7 @@ with
             validator_name,
             validation_date
 
-        from qa
+        from src
 
     )
 

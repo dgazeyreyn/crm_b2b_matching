@@ -1,5 +1,6 @@
+-- models/marts/dim_company.sql
 with
-    companies as (select * from {{ ref("stg_zi_companies__companies") }}),
+    src as (select * from {{ ref("stg_zi_companies__companies") }}),
 
     final as (
 
@@ -12,7 +13,7 @@ with
             zi_company_city,
             zi_company_region
 
-        from companies
+        from src
 
     )
 

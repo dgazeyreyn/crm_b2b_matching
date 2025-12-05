@@ -1,4 +1,4 @@
--- models/dim/dim_date.sql
+-- models/marts/dim_date.sql
 with
     src as (select * from {{ ref("stg_support__themes") }}),
 

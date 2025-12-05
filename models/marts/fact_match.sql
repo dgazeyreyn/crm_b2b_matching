@@ -1,5 +1,6 @@
+-- models/marts/fact_match.sql
 with
-    results as (select * from {{ ref("stg_matching__results") }}),
+    src as (select * from {{ ref("stg_matching__results") }}),
 
     final as (
 
@@ -10,7 +11,7 @@ with
             match_date,
             algorithm_version
 
-        from results
+        from src
 
     )
 

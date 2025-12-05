@@ -1,0 +1,14 @@
+models:
+  - name: fact_manual_validation
+    columns:
+      - name: crm_account_id
+        data_tests:
+          - unique
+          - not_null
+      - name: manual_validation_result
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - CORRECT
+                  - INCORRECT
