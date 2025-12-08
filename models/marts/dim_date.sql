@@ -1,6 +1,6 @@
 -- models/marts/dim_date.sql
 with
-    src as (select * from {{ ref("stg_support__themes") }}),
+    src as (select * from {{ ref("int_support_tickets") }}),
 
     -- Get min/max date from support themes staging model
     bounds as (

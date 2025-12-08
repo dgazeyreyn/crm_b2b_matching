@@ -1,7 +1,11 @@
+version: 2
+
 models:
   - name: dim_company
+    description: "Dimension table for firmographic and identity attributes of matched companies."
     columns:
       - name: zi_company_id
-        data_tests:
-          - unique
+        description: "Primary key for the company dimension."
+        tests:
           - not_null
+          - unique

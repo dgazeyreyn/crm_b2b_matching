@@ -1,7 +1,11 @@
+version: 2
+
 models:
   - name: dim_crm_account
+    description: "Dimension table representing CRM accounts enriched with match metadata."
     columns:
       - name: crm_account_id
-        data_tests:
-          - unique
+        description: "Primary key for the CRM account dimension."
+        tests:
           - not_null
+          - unique

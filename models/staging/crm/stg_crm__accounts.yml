@@ -1,7 +1,35 @@
+version: 2
+
 models:
   - name: stg_crm__accounts
+    description: "Staging model containing normalized CRM account records tied to tenants."
+
     columns:
       - name: crm_account_id
-        data_tests:
-          - unique
+        description: "Primary key representing the CRM account."
+        tests:
           - not_null
+          - unique
+
+      - name: tenant_id
+        description: "Tenant (ZoomInfo customer) associated with the CRM account."
+        tests:
+          - not_null
+
+      - name: tenant_company_name
+        description: "Descriptive name of the tenant organization."
+
+      - name: crm_account_name
+        description: "Name of the CRM account (customer of the tenant)."
+
+      - name: crm_account_url
+        description: "Website URL associated with the CRM account."
+
+      - name: crm_account_country
+        description: "Country where the CRM account is located."
+
+      - name: crm_account_region
+        description: "Region or state where the CRM account is located."
+
+      - name: crm_account_headcount
+        description: "Employee count of the CRM account."

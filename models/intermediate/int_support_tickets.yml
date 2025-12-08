@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: int_support__themes_deduped
+    description: >
+      Intermediate model that enforces the canonical grain for support themes:
+      one row per tenant_id, feedback_theme, and ticket_date. Duplicates from
+      the staging layer are removed or aggregated as appropriate. A surrogate
+      ticket_id key is generated based on the grain.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - tenant_id
+            - feedback_theme
+            - ticket_date
+
+    columns:
+      - name: ticket_id
+        description: >
+          Surrogate primary key generated from the combination of
+          tenant_id + feedback_theme + ticket_date. Ensures stable identity
+          for each unique support ticket theme event.
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_id
+        description: "Foreign key referencing the tenant who submitted the ticket."
+        tests:
+          - not_null
+
+      - name: feedback_theme
+        description: "Categorized support theme derived from customer support interactions."
+        tests:
+          - not_null
+          - accepted_values:
+              values:
+                - data_completeness
+                - match_accuracy
+                - no_match_found
+                - outdated_company_info
+                - poor_data_quality
+                - wrong_company_matched
+
+      - name: ticket_date
+        description: "Date associated with the customer support ticket."
+        tests:
+          - not_null
+
+      - name: frequency
+        description: >
+          Number of grouped support interactions for the given tenant-theme-date
+          combination. Represents aggregated count of underlying raw records.
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: avg_severity
+        description: "Average severity score associated with the grouped tickets (typically 0–10)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+
+      - name: resolution_days
+        description: "Number of days taken to resolve the ticket(s)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: customer_segment
+        description: "Segment classification for the tenant (SMB, MM, ENT)."
+        tests:
+          - accepted_values:
+              values: ['SMB', 'MM', 'ENT']

@@ -1,18 +1,23 @@
+version: 2
+
 models:
   - name: dim_feedback_theme
+    description: "Dimension table of standardized support feedback themes representing categories of customer concerns or issues."
     columns:
       - name: feedback_theme_key
-        data_tests:
-          - unique
+        description: "Primary key for feedback theme dimension."
+        tests:
           - not_null
+          - unique
+
       - name: feedback_theme
-        data_tests:
+        description: "Human-readable label describing the type of support feedback."
+        tests:
           - accepted_values:
-              arguments:
-                values:
-                  - outdated_company_info
-                  - poor_data_quality
-                  - wrong_company_matched
-                  - match_accuracy
-                  - data_completeness
-                  - no_match_found
+              values:
+                - data_completeness
+                - match_accuracy
+                - no_match_found
+                - outdated_company_info
+                - poor_data_quality
+                - wrong_company_matched

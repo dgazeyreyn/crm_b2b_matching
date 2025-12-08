@@ -1,7 +1,33 @@
+version: 2
+
 models:
   - name: stg_zi_companies__companies
+    description: "Staging model representing company attributes sourced from ZoomInfo's dataset."
+
     columns:
       - name: zi_company_id
-        data_tests:
-          - unique
+        description: "Primary key representing the ZoomInfo company record."
+        tests:
           - not_null
+          - unique
+
+      - name: zi_company_name
+        description: "Company name as standardized within ZoomInfo’s dataset."
+
+      - name: zi_company_url
+        description: "Primary website URL associated with the company."
+
+      - name: zi_company_headcount
+        description: "Number of employees associated with the company."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: zi_company_country
+        description: "Country in which the company's headquarters is located."
+
+      - name: zi_company_city
+        description: "City of the company's headquarters."
+
+      - name: zi_company_region
+        description: "State or region of the company’s headquarters."

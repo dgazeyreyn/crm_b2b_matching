@@ -1,7 +1,11 @@
+version: 2
+
 models:
   - name: dim_date
+    description: "Date dimension generated from the min/max dates in support data."
     columns:
       - name: date_key
-        data_tests:
-          - unique
+        description: "YYYYMMDD integer key for date dimension."
+        tests:
           - not_null
+          - unique

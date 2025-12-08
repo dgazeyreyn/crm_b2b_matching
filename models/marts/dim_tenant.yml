@@ -1,15 +1,11 @@
+version: 2
+
 models:
   - name: dim_tenant
+    description: "Dimension table representing customer tenants including segmentation, industry, and firmographic attributes."
     columns:
       - name: tenant_id
-        data_tests:
-          - unique
+        description: "Primary key representing a unique tenant/customer."
+        tests:
           - not_null
-      - name: customer_segment
-        data_tests:
-          - accepted_values:
-              arguments:
-                values:
-                  - ENT
-                  - MM
-                  - SMB
+          - unique

@@ -1,14 +1,42 @@
+version: 2
+
 models:
   - name: stg_matching__validation
+    description: "Staging model containing manual validation work performed by ZoomInfo’s internal research team to assess match accuracy."
+
     columns:
       - name: crm_account_id
-        data_tests:
-          - unique
+        description: "CRM account evaluated during validation."
+        tests:
           - not_null
+          - unique  # sample-only assumption
+
+      - name: zi_company_id
+        description: "ZoomInfo company evaluated during validation."
+        tests:
+          - not_null
+          - unique  # sample-only assumption
+
+      - name: match_confidence_score
+        description: "Confidence score from the algorithm for the associated match."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
       - name: manual_validation_result
-        data_tests:
+        description: "Outcome of manual validation."
+        tests:
           - accepted_values:
-              arguments:
-                values:
-                  - CORRECT
-                  - INCORRECT
+              values: ['CORRECT', 'INCORRECT']
+
+      - name: validation_notes
+        description: "Optional notes provided by the validator."
+
+      - name: validator_name
+        description: "Name or identifier of the validating researcher."
+
+      - name: validation_date
+        description: "Date of manual validation."
+        tests:
+          - not_null
