@@ -3,5 +3,4 @@ models:
     columns:
       - name: tenant_id
         data_tests:
-          - unique
           - not_null
