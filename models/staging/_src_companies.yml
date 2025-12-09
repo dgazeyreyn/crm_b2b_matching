@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: companies
+  - name: zi_companies
     description: The dataset of companies pulled from ZI's database
     tables:
       - name: companies

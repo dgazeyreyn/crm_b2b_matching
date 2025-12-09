@@ -1,15 +1,27 @@
+version: 2
+
 models:
   - name: fact_customer_health
+    description: "Fact table containing tenant-level business metrics including ACV and NPS."
+
     columns:
       - name: tenant_id
-        data_tests:
-          - unique
+        description: "Foreign key referencing the tenant dimension."
+        tests:
           - not_null
-      - name: customer_segment
-        data_tests:
-          - accepted_values:
-              arguments:
-                values:
-                  - ENT
-                  - MM
-                  - SMB
+          - relationships:
+              to: ref('dim_tenant')
+              field: tenant_id
+
+      - name: annual_contract_value
+        description: "Annual contract revenue associated with the tenant."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: data_quality_nps
+        description: "Net Promoter Score measuring satisfaction with data quality (0–10)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10

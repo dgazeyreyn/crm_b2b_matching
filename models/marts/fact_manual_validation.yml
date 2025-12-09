@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: fact_manual_validation
+    description: "Fact table containing results of manual validation performed by research team."
+
+    columns:
+      - name: crm_account_id
+        description: "Foreign key referencing CRM account being validated."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_crm_account')
+              field: crm_account_id
+
+      - name: zi_company_id
+        description: "Foreign key referencing the ZoomInfo company matched to the CRM account."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: zi_company_id
+
+      - name: manual_validation_result
+        description: "Outcome of manual validation."
+        tests:
+          - accepted_values:
+              values: ['CORRECT', 'INCORRECT']
+
+      - name: validation_notes
+        description: "Additional details from the validation process."
+
+      - name: validator_name
+        description: "Name of the manual validator."
+
+      - name: validation_date
+        description: "Date the validation occurred."
+        tests:
+          - not_null

@@ -1,7 +1,34 @@
+version: 2
+
 models:
   - name: stg_matching__results
+    description: "Staging model containing algorithm-derived match results between CRM accounts and ZoomInfo companies."
+
     columns:
       - name: crm_account_id
-        data_tests:
-          - unique
+        description: "Foreign key referencing a CRM account used in matching."
+        tests:
           - not_null
+          - unique  # sample-only assumption
+
+      - name: zi_company_id
+        description: "Foreign key referencing a ZoomInfo company used in matching."
+        tests:
+          - not_null
+          - unique  # sample-only assumption
+
+      - name: match_confidence_score
+        description: "Confidence score (0-100) returned by the matching algorithm."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: match_date
+        description: "Date on which the match was generated."
+        tests:
+          - not_null
+
+      - name: algorithm_version
+        description: "Version of the matching algorithm used to produce the result."

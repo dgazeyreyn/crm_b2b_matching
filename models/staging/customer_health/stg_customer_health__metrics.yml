@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: stg_customer_health__metrics
+    description: "Staging model containing customer satisfaction, segmentation, and business metrics."
+
+    columns:
+      - name: tenant_id
+        description: "Primary key representing the tenant/customer."
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_company_name
+        description: "Name of the tenant organization."
+
+      - name: customer_segment
+        description: "Customer segment classification."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SMB', 'MM', 'ENT']
+
+      - name: annual_contract_value
+        description: "Contract value for the customer, expressed annually."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: data_quality_nps
+        description: "Net Promoter Score measuring satisfaction with data quality (0–10)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+
+      - name: industry
+        description: "Industry classification for the tenant."

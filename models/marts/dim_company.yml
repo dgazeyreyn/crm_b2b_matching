@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: dim_company
+    description: "Dimension table containing standardized attributes for ZoomInfo companies."
+
+    columns:
+      - name: zi_company_id
+        description: "Primary key for the ZoomInfo company dimension."
+        tests:
+          - not_null
+          - unique
+
+      - name: zi_company_name
+        description: "Name of the company as sourced from ZoomInfo."
+
+      - name: zi_company_url
+        description: "Website URL of the company."
+
+      - name: zi_company_headcount
+        description: "Employee count associated with the company."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: zi_company_country
+        description: "Country in which the company is headquartered."
+
+      - name: zi_company_city
+        description: "City of the company’s primary location."
+
+      - name: zi_company_region
+        description: "Region or state where the company is located."

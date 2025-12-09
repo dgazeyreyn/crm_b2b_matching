@@ -1,24 +1,20 @@
-with
-    source as (
+with source as (
 
-        select * from {{ source("matching", "results") }}
+    select * from {{ source('matching', 'results') }}
 
-    ),
+),
 
-    renamed as (
+renamed as (
 
-        select
-            crm_account_id,
-            zi_company_id,
-            match_confidence_score,
-            manual_validation_result,
-            validation_notes,
-            validator_name,
-            validation_date
+    select
+        crm_account_id,
+        zi_company_id,
+        match_confidence_score,
+        match_date,
+        algorithm_version
 
-        from source
+    from source
 
-    )
+)
 
-select *
-from renamed
+select * from renamed

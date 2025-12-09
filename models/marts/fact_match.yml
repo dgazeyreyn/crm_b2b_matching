@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: fact_match
+    description: "Fact table containing algorithm match output linking CRM accounts to ZoomInfo companies."
+
+    columns:
+      - name: crm_account_id
+        description: "Foreign key referencing CRM account."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_crm_account')
+              field: crm_account_id
+
+      - name: zi_company_id
+        description: "Foreign key referencing company in ZoomInfo."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: zi_company_id
+
+      - name: match_confidence_score
+        description: "Algorithm confidence score (0–100)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 100
+
+      - name: match_date
+        description: "Date when the match was created."
+        tests:
+          - not_null
+
+      - name: algorithm_version
+        description: "Version of the matching algorithm used."

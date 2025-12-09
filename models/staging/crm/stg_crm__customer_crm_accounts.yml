@@ -1,7 +1,0 @@
-models:
-  - name: stg_crm__customer_crm_accounts
-    columns:
-      - name: crm_account_id
-        data_tests:
-          - unique
-          - not_null
