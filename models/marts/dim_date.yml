@@ -2,10 +2,50 @@ version: 2
 
 models:
   - name: dim_date
-    description: "Date dimension generated from the min/max dates in support data."
+    description: "Date dimension derived from min/max ticket_date across support themes."
+
     columns:
       - name: date_key
-        description: "YYYYMMDD integer key for date dimension."
+        description: "Integer surrogate key in YYYYMMDD format."
         tests:
           - not_null
           - unique
+
+      - name: date
+        description: "Actual calendar date."
+        tests:
+          - not_null
+
+      - name: year
+        description: "Calendar year."
+
+      - name: quarter
+        description: "Calendar quarter (1–4)."
+
+      - name: month
+        description: "Calendar month number (1–12)."
+
+      - name: day_of_month
+        description: "Day of month (1–31)."
+
+      - name: week_of_year
+        description: "Week number of the year."
+
+      - name: day_of_week
+        description: "Numeric day of week (1=Sunday, 7=Saturday)."
+
+      - name: iso_week
+        description: "ISO week number."
+
+      - name: iso_year
+        description: "ISO year."
+
+      - name: weekday_name
+        description: "Full weekday name."
+
+      - name: month_name
+        description: "Month name."
+
+      - name: is_weekend
+        description: "Boolean indicating whether date is weekend."
+
