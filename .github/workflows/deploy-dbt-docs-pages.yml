@@ -29,15 +29,23 @@ jobs:
           pip install dbt-core
           if [ -n "$DBT_ADAPTER_PACKAGES" ]; then pip install $DBT_ADAPTER_PACKAGES; fi
 
-      - name: (Optional) write profiles.yml from secret
+      - name: Write GCP service account key
+        if: ${{ secrets.GCP_SA_KEY != '' }}
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          mkdir -p /tmp
+          printf '%s' "$GCP_SA_KEY" > /tmp/gcp_keyfile.json
+          chmod 600 /tmp/gcp_keyfile.json
+
+      - name: Write DBT profiles from secret
         if: ${{ secrets.DBT_PROFILES_YML != '' }}
         env:
           DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
         run: |
-          # If you store the entire profiles.yml in a repository secret called DBT_PROFILES_YML,
-          # write it to the default location so dbt can use it.
           mkdir -p ~/.dbt
-          echo "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
+          printf '%s' "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
+          chmod 600 ~/.dbt/profiles.yml
           echo "Wrote profiles.yml to ~/.dbt/profiles.yml"
 
       - name: Debug: show dbt version
@@ -48,7 +56,6 @@ jobs:
 
       - name: Prepare site directory
         run: |
-          # dbt generates docs and assets in target/; copy them into ./site
           mkdir -p site
           cp -r target/* site/ || true
 
