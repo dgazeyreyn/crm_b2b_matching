@@ -29,24 +29,31 @@ jobs:
           pip install dbt-core
           if [ -n "$DBT_ADAPTER_PACKAGES" ]; then pip install $DBT_ADAPTER_PACKAGES; fi
 
-      - name: Write GCP service account key
-        if: ${{ secrets.GCP_SA_KEY != '' }}
+      - name: Write GCP service account key (if provided)
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
         run: |
-          mkdir -p /tmp
-          printf '%s' "$GCP_SA_KEY" > /tmp/gcp_keyfile.json
-          chmod 600 /tmp/gcp_keyfile.json
+          if [ -n "$GCP_SA_KEY" ]; then
+            mkdir -p /tmp
+            printf '%s' "$GCP_SA_KEY" > /tmp/gcp_keyfile.json
+            chmod 600 /tmp/gcp_keyfile.json
+            echo "Wrote /tmp/gcp_keyfile.json"
+          else
+            echo "GCP_SA_KEY secret not set — skipping keyfile write"
+          fi
 
-      - name: Write DBT profiles from secret
-        if: ${{ secrets.DBT_PROFILES_YML != '' }}
+      - name: Write DBT profiles from secret (if provided)
         env:
           DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
         run: |
-          mkdir -p ~/.dbt
-          printf '%s' "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
-          chmod 600 ~/.dbt/profiles.yml
-          echo "Wrote profiles.yml to ~/.dbt/profiles.yml"
+          if [ -n "$DBT_PROFILES_YML" ]; then
+            mkdir -p ~/.dbt
+            printf '%s' "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
+            chmod 600 ~/.dbt/profiles.yml
+            echo "Wrote ~/.dbt/profiles.yml"
+          else
+            echo "DBT_PROFILES_YML secret not set — skipping profiles write"
+          fi
 
       - name: Debug show dbt version
         run: |
