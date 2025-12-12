@@ -55,6 +55,16 @@ jobs:
             echo "DBT_PROFILES_YML secret not set — skipping profiles write"
           fi
 
+      - name: Install dbt package dependencies
+        run: |
+          # Ensure packages declared in packages.yml are installed
+          dbt deps
+          ls -la dbt_packages || true
+
+      - name: Validate dbt project (parse)
+        run: |
+          dbt parse
+
       - name: Debug show dbt version
         run: |
           dbt --version || true
@@ -73,5 +83,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
-          # optional: set user/email for the commit
-          # commit_message: "Deploy dbt docs via GitHub Actions"
