@@ -49,13 +49,15 @@ jobs:
           echo "Wrote profiles.yml to ~/.dbt/profiles.yml"
 
       - name: Debug: show dbt version
-        run: dbt --version || true
+        run: |
+          dbt --version || true
 
       - name: Generate dbt docs
         run: dbt docs generate
 
       - name: Prepare site directory
         run: |
+          # dbt generates docs and assets in target/; copy them into ./site
           mkdir -p site
           cp -r target/* site/ || true
 
