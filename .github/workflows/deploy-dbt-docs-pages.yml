@@ -61,6 +61,14 @@ jobs:
           dbt deps
           ls -la dbt_packages || true
 
+      - name: Debug macros directory
+        run: |
+          echo "=== macros directory ==="
+          find macros -type f || echo "no macros found"
+      
+          echo "=== materializations anywhere ==="
+          find . -path "*materializations*" -type f
+
       - name: Validate dbt project (parse)
         run: |
           dbt parse
