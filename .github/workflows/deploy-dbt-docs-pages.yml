@@ -6,11 +6,11 @@ on:
       - main
 
 jobs:
-  dbt-docs:
+  deploy-dbt-docs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -26,7 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade "dbt-bigquery>=1.7,<2.0"
 
-      # 4️⃣ Set up GCP keyfile
+      # 4️⃣ Set up GCP keyfile in CI
       - name: Set up GCP keyfile
         run: |
           mkdir -p ~/.dbt
@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
 
-      # 6️⃣ Install dbt packages
+      # 6️⃣ Install dbt package dependencies
       - name: Install dbt packages
         run: dbt deps
 
