@@ -26,6 +26,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade "dbt-bigquery>=1.7,<2.0"
 
+      - name: Set up GCP keyfile
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.GCP_SA_KEY }}" > ~/.dbt/bigquery-sa.json
+
       # 4️⃣ Verify installed dbt version
       - name: Verify dbt version
         run: dbt --version
