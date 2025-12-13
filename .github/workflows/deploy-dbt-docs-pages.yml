@@ -30,6 +30,11 @@ jobs:
       - name: Verify dbt version
         run: dbt --version
 
+      - name: Set up dbt profiles
+        run: |
+          mkdir -p ~/.dbt
+          echo "${{ secrets.DBT_PROFILES_YML }}" > ~/.dbt/profiles.yml
+
       # 5️⃣ Install packages declared in packages.yml
       - name: Install dbt packages
         run: dbt deps
