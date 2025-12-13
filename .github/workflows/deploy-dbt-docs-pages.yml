@@ -41,8 +41,6 @@ jobs:
 
       # 6️⃣ Generate dbt docs
       - name: Generate dbt docs
-        env:
-          DBT_PROFILES_DIR: .
         run: dbt docs generate
 
       # 7️⃣ Deploy docs to GitHub Pages
