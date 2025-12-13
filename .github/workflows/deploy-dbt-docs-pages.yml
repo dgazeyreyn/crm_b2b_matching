@@ -29,8 +29,10 @@ jobs:
       # 4️⃣ Set up GCP keyfile in CI
       - name: Set up GCP keyfile
         run: |
-          mkdir -p ~/.dbt
-          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/.dbt/bigquery-sa.json
+          mkdir -p $HOME/.dbt
+          cat <<EOF > $HOME/.dbt/bigquery-sa.json
+          ${{ secrets.GCP_SA_KEY }}
+          EOF
 
       # 5️⃣ Set up dbt profiles
       - name: Set up dbt profiles
