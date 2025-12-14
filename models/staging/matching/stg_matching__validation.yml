@@ -21,14 +21,16 @@ models:
         description: "Confidence score from the algorithm for the associated match."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 100
+              arguments:
+                min_value: 0
+                max_value: 100
 
       - name: manual_validation_result
         description: "Outcome of manual validation."
         tests:
           - accepted_values:
-              values: ['CORRECT', 'INCORRECT']
+              arguments:
+                values: ['CORRECT', 'INCORRECT']
 
       - name: validation_notes
         description: "Optional notes provided by the validator."
