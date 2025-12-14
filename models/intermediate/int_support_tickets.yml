@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: int_support__themes_deduped
+  - name: int_support_tickets
     description: >
       Intermediate model that enforces the canonical grain for support themes:
       one row per tenant_id, feedback_theme, and ticket_date. Duplicates from
@@ -10,10 +10,11 @@ models:
 
     tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - tenant_id
-            - feedback_theme
-            - ticket_date
+          arguments:
+            combination_of_columns:
+              - tenant_id
+              - feedback_theme
+              - ticket_date
 
     columns:
       - name: ticket_id
@@ -35,13 +36,14 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values:
-                - data_completeness
-                - match_accuracy
-                - no_match_found
-                - outdated_company_info
-                - poor_data_quality
-                - wrong_company_matched
+              arguments:
+                values:
+                  - "data_completeness"
+                  - "match_accuracy"
+                  - "no_match_found"
+                  - "outdated_company_info"
+                  - "poor_data_quality"
+                  - "wrong_company_matched"
 
       - name: ticket_date
         description: "Date associated with the customer support ticket."
@@ -55,23 +57,27 @@ models:
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 
       - name: avg_severity
         description: "Average severity score associated with the grouped tickets (typically 0–10)."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 10
+              arguments:
+                min_value: 0
+                max_value: 10
 
       - name: resolution_days
         description: "Number of days taken to resolve the ticket(s)."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 
       - name: customer_segment
         description: "Segment classification for the tenant (SMB, MM, ENT)."
         tests:
           - accepted_values:
-              values: ['SMB', 'MM', 'ENT']
+              arguments:
+                values: ["SMB", "MM", "ENT"]

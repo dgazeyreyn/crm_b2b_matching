@@ -19,21 +19,24 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['SMB', 'MM', 'ENT']
+              arguments:
+                values: ['SMB', 'MM', 'ENT']
 
       - name: annual_contract_value
         description: "Contract value for the customer, expressed annually."
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 
       - name: data_quality_nps
         description: "Net Promoter Score measuring satisfaction with data quality (0–10)."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 10
+              arguments:
+                min_value: 0
+                max_value: 10
 
       - name: industry
         description: "Industry classification for the tenant."

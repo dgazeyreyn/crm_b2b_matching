@@ -14,34 +14,38 @@ models:
         description: "Customer segment of the tenant."
         tests:
           - accepted_values:
-              values: ['SMB', 'MM', 'ENT']
+              arguments:
+                values: ['SMB', 'MM', 'ENT']
 
       - name: feedback_theme
         description: "Theme or category of the support ticket."
         tests:
           - not_null
           - accepted_values:
-              values:
-                - data_completeness
-                - match_accuracy
-                - no_match_found
-                - outdated_company_info
-                - poor_data_quality
-                - wrong_company_matched
+              arguments:
+                values:
+                  - data_completeness
+                  - match_accuracy
+                  - no_match_found
+                  - outdated_company_info
+                  - poor_data_quality
+                  - wrong_company_matched
 
       - name: frequency
         description: "Count of grouped support ticket events for the given theme and date."
         tests:
           - not_null
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 
       - name: avg_severity
         description: "Average severity rating for tickets in this grouping (0–10)."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 10
+              arguments:
+                min_value: 0
+                max_value: 10
 
       - name: ticket_date
         description: "Date of the support ticket interaction."
@@ -52,5 +56,6 @@ models:
         description: "Days required to resolve the ticket(s)."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 

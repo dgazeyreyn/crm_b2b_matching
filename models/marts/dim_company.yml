@@ -21,7 +21,8 @@ models:
         description: "Employee count associated with the company."
         tests:
           - dbt_utils.accepted_range:
-              min_value: 0
+              arguments:
+                min_value: 0
 
       - name: zi_company_country
         description: "Country in which the company is headquartered."
