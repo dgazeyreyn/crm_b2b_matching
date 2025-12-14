@@ -9,13 +9,13 @@ models:
         description: "CRM account evaluated during validation."
         tests:
           - not_null
-          - unique  # sample-only assumption
+          - unique
 
       - name: zi_company_id
         description: "ZoomInfo company evaluated during validation."
         tests:
           - not_null
-          - unique  # sample-only assumption
+          - unique
 
       - name: match_confidence_score
         description: "Confidence score from the algorithm for the associated match."
@@ -30,7 +30,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['CORRECT', 'INCORRECT']
+                values: ["CORRECT", "INCORRECT"]
 
       - name: validation_notes
         description: "Optional notes provided by the validator."

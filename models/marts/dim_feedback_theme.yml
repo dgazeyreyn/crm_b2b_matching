@@ -1,19 +1,14 @@
 version: 2
-
 models:
-  - name: dim_feedback_theme
-    description: "Dimension table containing unique feedback themes for support tickets."
-
-    columns:
-      - name: feedback_theme_key
-        description: "Surrogate primary key for the feedback theme."
-        tests:
-          - not_null
-          - unique
-
-      - name: feedback_theme
-        description: "Human-readable support feedback theme."
-
-      - name: loaded_at
-        description: "Timestamp when the dimension record was loaded."
-
+- name: dim_feedback_theme
+  description: Dimension table containing unique feedback themes for support tickets.
+  columns:
+  - name: feedback_theme_key
+    description: Surrogate primary key for the feedback theme.
+    tests:
+    - not_null
+    - unique
+  - name: feedback_theme
+    description: Human-readable support feedback theme.
+  - name: loaded_at
+    description: Timestamp when the dimension record was loaded.

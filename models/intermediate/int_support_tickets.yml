@@ -80,4 +80,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ["SMB", "MM", "ENT"]
+                values:
+                  - "SMB"
+                  - "MM"
+                  - "ENT"

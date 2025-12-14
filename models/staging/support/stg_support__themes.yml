@@ -15,7 +15,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['SMB', 'MM', 'ENT']
+                values: ["SMB", "MM", "ENT"]
 
       - name: feedback_theme
         description: "Theme or category of the support ticket."
@@ -23,13 +23,14 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values:
-                  - data_completeness
-                  - match_accuracy
-                  - no_match_found
-                  - outdated_company_info
-                  - poor_data_quality
-                  - wrong_company_matched
+                values: [
+                  "data_completeness",
+                  "match_accuracy",
+                  "no_match_found",
+                  "outdated_company_info",
+                  "poor_data_quality",
+                  "wrong_company_matched"
+                ]
 
       - name: frequency
         description: "Count of grouped support ticket events for the given theme and date."
@@ -58,4 +59,3 @@ models:
           - dbt_utils.accepted_range:
               arguments:
                 min_value: 0
-

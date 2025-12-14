@@ -1,36 +1,27 @@
 version: 2
-
 models:
-  - name: dim_crm_account
-    description: "Dimension table containing CRM account details linked to tenant customers."
-
-    columns:
-      - name: crm_account_id
-        description: "Primary key for the CRM account dimension."
-        tests:
-          - not_null
-          - unique
-
-      - name: tenant_id
-        description: "Foreign key referencing the owning tenant."
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_tenant')
-              field: tenant_id
-
-      - name: crm_account_name
-        description: "Name of the CRM account."
-
-      - name: crm_account_url
-        description: "Website URL of the CRM account."
-
-      - name: crm_account_country
-        description: "Country associated with the CRM account."
-
-      - name: crm_account_region
-        description: "Region or state associated with the CRM account."
-
-      - name: crm_account_headcount
-        description: "Employee count for the CRM account."
-
+- name: dim_crm_account
+  description: Dimension table containing CRM account details linked to tenant customers.
+  columns:
+  - name: crm_account_id
+    description: Primary key for the CRM account dimension.
+    tests:
+    - not_null
+    - unique
+  - name: tenant_id
+    description: Foreign key referencing the owning tenant.
+    tests:
+    - not_null
+    - relationships:
+        to: ref('dim_tenant')
+        field: tenant_id
+  - name: crm_account_name
+    description: Name of the CRM account.
+  - name: crm_account_url
+    description: Website URL of the CRM account.
+  - name: crm_account_country
+    description: Country associated with the CRM account.
+  - name: crm_account_region
+    description: Region or state associated with the CRM account.
+  - name: crm_account_headcount
+    description: Employee count for the CRM account.

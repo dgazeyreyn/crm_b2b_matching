@@ -1,24 +1,23 @@
 version: 2
-
 models:
-  - name: dim_tenant
-    description: "Dimension table representing tenant (customer) attributes."
-
-    columns:
-      - name: tenant_id
-        description: "Primary key representing the tenant."
-        tests:
-          - not_null
-          - unique
-
-      - name: tenant_company_name
-        description: "Name of the tenant organization."
-
-      - name: customer_segment
-        description: "ZoomInfo customer segment classification."
-        tests:
-          - accepted_values:
-              values: ['SMB', 'MM', 'ENT']
-
-      - name: industry
-        description: "Industry classification for the tenant."
+- name: dim_tenant
+  description: Dimension table representing tenant (customer) attributes.
+  columns:
+  - name: tenant_id
+    description: Primary key representing the tenant.
+    tests:
+    - not_null
+    - unique
+  - name: tenant_company_name
+    description: Name of the tenant organization.
+  - name: customer_segment
+    description: ZoomInfo customer segment classification.
+    tests:
+    - accepted_values:
+        arguments:
+          values:
+          - SMB
+          - MM
+          - ENT
+  - name: industry
+    description: Industry classification for the tenant.

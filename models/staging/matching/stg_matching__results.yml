@@ -9,13 +9,13 @@ models:
         description: "Foreign key referencing a CRM account used in matching."
         tests:
           - not_null
-          - unique  # sample-only assumption
+          - unique
 
       - name: zi_company_id
         description: "Foreign key referencing a ZoomInfo company used in matching."
         tests:
           - not_null
-          - unique  # sample-only assumption
+          - unique
 
       - name: match_confidence_score
         description: "Confidence score (0-100) returned by the matching algorithm."
