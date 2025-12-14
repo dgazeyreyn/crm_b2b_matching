@@ -52,5 +52,10 @@ jobs:
           EOF
 
       # 6️⃣ Generate dbt docs
+
+      # Install dbt package dependencies
+      - name: Install dbt deps
+        run: dbt deps
+
       - name: Generate dbt docs
         run: dbt docs generate
