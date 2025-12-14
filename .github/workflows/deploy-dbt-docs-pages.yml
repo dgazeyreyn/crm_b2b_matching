@@ -1,85 +1,61 @@
-name: Build and deploy dbt docs to GitHub Pages
+name: Generate dbt Docs
+
 on:
   push:
-    branches: [main]
-  workflow_dispatch: {}
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  build:
+  dbt-docs:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
 
     steps:
-      - name: Checkout repository
+      # 1️⃣ Check out repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      # 2️⃣ Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      - name: Install dbt and adapter packages
-        env:
-          DBT_ADAPTER_PACKAGES: ${{ secrets.DBT_ADAPTER_PACKAGES }}
+      # 3️⃣ Install dbt
+      - name: Install dbt-bigquery
         run: |
           python -m pip install --upgrade pip
-          pip install dbt-core
-          if [ -n "$DBT_ADAPTER_PACKAGES" ]; then pip install $DBT_ADAPTER_PACKAGES; fi
+          pip install dbt-bigquery==1.10.3
 
-      - name: Write GCP service account key (if provided)
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      # 4️⃣ Write BigQuery service account key
+      - name: Set up GCP keyfile
         run: |
-          if [ -n "$GCP_SA_KEY" ]; then
-            mkdir -p /tmp
-            printf '%s' "$GCP_SA_KEY" > /tmp/gcp_keyfile.json
-            chmod 600 /tmp/gcp_keyfile.json
-            echo "Wrote /tmp/gcp_keyfile.json"
-          else
-            echo "GCP_SA_KEY secret not set — skipping keyfile write"
-          fi
+          mkdir -p $HOME/.dbt
+          echo "${{ secrets.GCP_SA_KEY }}" > $HOME/.dbt/bigquery-sa.json
 
-      - name: Write DBT profiles from secret (if provided)
-        env:
-          DBT_PROFILES_YML: ${{ secrets.DBT_PROFILES_YML }}
+      # 5️⃣ Write profiles.yml
+      - name: Set up dbt profiles
         run: |
-          if [ -n "$DBT_PROFILES_YML" ]; then
-            mkdir -p ~/.dbt
-            printf '%s' "$DBT_PROFILES_YML" > ~/.dbt/profiles.yml
-            chmod 600 ~/.dbt/profiles.yml
-            echo "Wrote ~/.dbt/profiles.yml"
-          else
-            echo "DBT_PROFILES_YML secret not set — skipping profiles write"
-          fi
+          mkdir -p $HOME/.dbt
+          cat <<EOF > $HOME/.dbt/profiles.yml
+          default:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: zi-case-study
+                dataset: dbt_dreynolds
+                location: US
+                keyfile: $HOME/.dbt/bigquery-sa.json
+                threads: 4
+                timeout_seconds: 300
+          EOF
 
-      - name: Install dbt package dependencies
-        run: |
-          # Ensure packages declared in packages.yml are installed
-          dbt deps
-          ls -la dbt_packages || true
+      # 6️⃣ Generate dbt docs
 
-      - name: Validate dbt project (parse)
-        run: |
-          dbt parse
-
-      - name: Debug show dbt version
-        run: |
-          dbt --version || true
+      # Install dbt package dependencies
+      - name: Install dbt deps
+        run: dbt deps
 
       - name: Generate dbt docs
-        run: |
-          dbt docs generate
-
-      - name: Prepare site directory
-        run: |
-          mkdir -p site
-          cp -r target/* site/ || true
-
-      - name: Deploy to gh-pages using actions-gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+        run: dbt docs generate
