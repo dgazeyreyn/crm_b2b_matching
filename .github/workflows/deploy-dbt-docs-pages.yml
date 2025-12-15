@@ -59,4 +59,5 @@ jobs:
         run: dbt deps
 
       - name: Generate dbt docs
-        run: dbt docs generate
+        run: dbt docs generate --debug --no-partial-parse
+
