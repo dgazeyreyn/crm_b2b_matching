@@ -40,7 +40,7 @@ jobs:
       # 6️⃣ Write dbt profiles.yml
       - name: Set up dbt profiles
         run: |
-          cat <<EOF > $HOME/.dbt/profiles.yml
+          cat <<'EOF' > $HOME/.dbt/profiles.yml
 default:
   target: dev
   outputs:
@@ -61,7 +61,7 @@ EOF
 
       # 8️⃣ Generate dbt docs
       - name: Generate dbt docs
-        run: dbt docs generate --debug --no-partial-parse
+        run: dbt docs generate --no-partial-parse --debug
 
       # 9️⃣ Deploy dbt docs to GitHub Pages
       - name: Deploy dbt docs to GitHub Pages
