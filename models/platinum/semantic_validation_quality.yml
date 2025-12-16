@@ -1,0 +1,47 @@
+version: 2
+
+semantic_models:
+  - name: validation_quality
+    description: >
+      Semantic model capturing manual validation outcomes used to
+      assess the accuracy of algorithmic matching.
+
+    model: ref('fact_manual_validation')
+
+    entities:
+      - name: validation
+        type: primary
+        expr: |
+          concat(
+            crm_account_id,
+            '-',
+            zi_company_id,
+            '-',
+            cast(validation_date as string)
+          )
+
+      - name: crm_account
+        type: foreign
+        expr: crm_account_id
+
+      - name: company
+        type: foreign
+        expr: zi_company_id
+
+    dimensions:
+      - name: validation_date
+        type: time
+        expr: validation_date
+        type_params:
+          time_granularity: day
+
+      - name: manual_validation_result
+        type: categorical
+
+      - name: validator_name
+        type: categorical
+
+    measures:
+      - name: total_validations
+        description: Total number of manual validation events
+        agg: count
