@@ -1,0 +1,24 @@
+version: 2
+
+semantic_models:
+  - name: time_spine
+    description: >
+      Canonical time spine used by MetricFlow for all day-granularity
+      time dimensions in the semantic layer.
+
+    model: ref('dim_date')
+
+    defaults:
+      agg_time_dimension: date
+
+    entities:
+      - name: date
+        type: primary
+        expr: date
+
+    dimensions:
+      - name: date
+        type: time
+        expr: date
+        type_params:
+          time_granularity: day
