@@ -1,54 +1,79 @@
 {{ config(materialized="table") }}
 
 with
-    tenant_company_matches as (
+    matches as (
 
-        select a.tenant_id, m.zi_company_id
+        select m.crm_account_id, m.zi_company_id, a.tenant_id
 
         from {{ ref("fact_match") }} m
         join {{ ref("dim_crm_account") }} a on m.crm_account_id = a.crm_account_id
-
     ),
 
-    tenant_company_quality as (
+    company_quality as (
 
-        select t.tenant_id, q.city_region_inconsistent
-
-        from tenant_company_matches t
-        join {{ ref("mart_company_quality") }} q on t.zi_company_id = q.zi_company_id
-
+        select zi_company_id, city_region_inconsistent
+        from {{ ref("mart_company_quality") }}
     ),
 
-    tenant_metrics as (
+    match_alignment as (
+
+        select crm_account_id, zi_company_id, region_mismatch
+        from {{ ref("mart_match_alignment_quality") }}
+    ),
+
+    combined as (
 
         select
-            tenant_id,
+            m.tenant_id,
+            m.crm_account_id,
+            m.zi_company_id,
 
-            count(*) as matched_companies,
+            coalesce(c.city_region_inconsistent, false) as company_inconsistent,
+            coalesce(a.region_mismatch, false) as region_mismatch
 
-            countif(city_region_inconsistent) as inconsistent_companies,
-
-            safe_divide(
-                countif(city_region_inconsistent), count(*)
-            ) as inconsistency_rate
-
-        from tenant_company_quality
-        group by tenant_id
+        from matches m
+        left join company_quality c on m.zi_company_id = c.zi_company_id
+        left join
+            match_alignment a
+            on m.crm_account_id = a.crm_account_id
+            and m.zi_company_id = a.zi_company_id
     )
 
 select
     tenant_id,
-    matched_companies,
-    inconsistent_companies,
-    inconsistency_rate,
 
-    -- Extension 3: Trust risk flag
+    count(*) as total_matches,
+
+    countif(company_inconsistent) as company_data_errors,
+    countif(region_mismatch) as match_alignment_errors,
+
+    countif(company_inconsistent or region_mismatch) as affected_matches,
+
+    countif(company_inconsistent and region_mismatch) as compound_failures,
+
+    safe_divide(countif(company_inconsistent), count(*)) as company_data_error_rate,
+
+    safe_divide(countif(region_mismatch), count(*)) as match_alignment_error_rate,
+
+    safe_divide(
+        countif(company_inconsistent or region_mismatch), count(*)
+    ) as affected_match_rate,
+
+    safe_divide(
+        countif(company_inconsistent and region_mismatch), count(*)
+    ) as compound_error_rate,
+
     case
-        when inconsistency_rate >= 0.40
+        when
+            safe_divide(countif(company_inconsistent or region_mismatch), count(*))
+            >= 0.50
         then 'HIGH'
-        when inconsistency_rate >= 0.20
+        when
+            safe_divide(countif(company_inconsistent or region_mismatch), count(*))
+            >= 0.20
         then 'MEDIUM'
         else 'LOW'
     end as trust_risk_level
 
-from tenant_metrics
+from combined
+group by tenant_id

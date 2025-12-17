@@ -1,16 +1,19 @@
 {{ config(materialized="table") }}
 
 select
-    p.tenant_id,
+    t.customer_segment,
 
-    coalesce(h.annual_contract_value, 0) as annual_contract_value,
+    sum(h.annual_contract_value) as total_acv,
 
-    p.inconsistency_rate,
+    sum(h.annual_contract_value * e.affected_match_rate) as exposed_acv,
 
-    p.trust_risk_level,
+    safe_divide(
+        sum(h.annual_contract_value * e.affected_match_rate),
+        sum(h.annual_contract_value)
+    ) as pct_acv_exposed
 
-    -- ACV-weighted exposure
-    coalesce(h.annual_contract_value, 0) * p.inconsistency_rate as acv_at_risk
+from {{ ref("platinum_tenant_exposure_metrics") }} e
+join {{ ref("fact_customer_health") }} h on e.tenant_id = h.tenant_id
+join {{ ref("dim_tenant") }} t on e.tenant_id = t.tenant_id
 
-from {{ ref("platinum_tenant_exposure_metrics") }} p
-left join {{ ref("fact_customer_health") }} h on p.tenant_id = h.tenant_id
+group by t.customer_segment
