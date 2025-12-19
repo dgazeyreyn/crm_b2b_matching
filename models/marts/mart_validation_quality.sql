@@ -1,38 +1,50 @@
--- models/marts/mart_validation_quality.sql
-{{ config(materialized='table') }}
+{{ config(materialized="table") }}
 
-with validations as (
-  select *
-  from {{ ref('fact_manual_validation') }}
-),
+with
+    source as (
 
-crm as (
-  select crm_account_id, tenant_id
-  from {{ ref('dim_crm_account') }}
-),
+        select
+            crm_account_id,
+            zi_company_id,
+            validation_date,
+            manual_validation_result
+        from {{ ref("fact_manual_validation") }}
 
-per_crm as (
-  select
-    v.crm_account_id,
-    coalesce(c.tenant_id, null) as tenant_id,
-    count(*) as validation_count,
-    sum(case when lower(v.manual_validation_result) in ('incorrect') then 1 else 0 end) as validation_incorrect_count,
-    safe_divide(sum(case when lower(v.manual_validation_result) in ('incorrect') then 1 else 0 end), nullif(count(*),0)) as validation_incorrect_rate,
-    min(validation_date) as first_validation_date,
-    max(validation_date) as last_validation_date
-  from validations v
-  left join crm c
-    on v.crm_account_id = c.crm_account_id
-  group by 1,2
-)
+    ),
 
-select
-  {{ dbt_utils.generate_surrogate_key(['crm_account_id']) }} as validation_quality_id,
-  crm_account_id,
-  tenant_id,
-  validation_count,
-  validation_incorrect_count,
-  validation_incorrect_rate,
-  first_validation_date,
-  last_validation_date
-from per_crm
+    standardized as (
+
+        select
+            -- Surrogate key: one row per validation event
+            {{
+                dbt_utils.generate_surrogate_key(
+                    ["crm_account_id", "zi_company_id", "validation_date"]
+                )
+            }} as validation_event_id,
+
+            crm_account_id,
+            zi_company_id,
+
+            validation_date as validation_timestamp,
+
+            -- Canonicalized outcome
+            case
+                when manual_validation_result = 'CORRECT'
+                then 'correct'
+                when manual_validation_result = 'INCORRECT'
+                then 'incorrect'
+                else 'unknown'
+            end as validation_outcome,
+
+            -- Boolean convenience flags
+            manual_validation_result
+            = 'INCORRECT' as is_validation_incorrect,
+
+            manual_validation_result = 'CORRECT' as is_validation_correct
+
+        from source
+
+    )
+
+select *
+from standardized
