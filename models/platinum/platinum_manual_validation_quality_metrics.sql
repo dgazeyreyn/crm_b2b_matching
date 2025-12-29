@@ -43,9 +43,7 @@ with
             -- Known defects
             coalesce(c.city_region_inconsistent, false) as city_region_inconsistent,
 
-            coalesce(
-                m.match_region_mismatch, false
-            ) as crm_company_region_mismatch,
+            coalesce(m.match_region_mismatch, false) as crm_company_region_mismatch,
 
             -- Composite defect flag
             (

@@ -3,11 +3,7 @@
 with
     source as (
 
-        select
-            crm_account_id,
-            zi_company_id,
-            validation_date,
-            manual_validation_result
+        select crm_account_id, zi_company_id, validation_date, manual_validation_result
         from {{ ref("fact_manual_validation") }}
 
     ),
@@ -37,8 +33,7 @@ with
             end as validation_outcome,
 
             -- Boolean convenience flags
-            manual_validation_result
-            = 'INCORRECT' as is_validation_incorrect,
+            manual_validation_result = 'INCORRECT' as is_validation_incorrect,
 
             manual_validation_result = 'CORRECT' as is_validation_correct
 

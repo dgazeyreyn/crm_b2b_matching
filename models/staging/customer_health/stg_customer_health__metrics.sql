@@ -1,21 +1,19 @@
-with source as (
+with
+    source as (select * from {{ source("customer_health", "metrics") }}),
 
-    select * from {{ source('customer_health', 'metrics') }}
+    renamed as (
 
-),
+        select
+            tenant_id,
+            tenant_company_name,
+            customer_segment,
+            annual_contract_value,
+            data_quality_nps,
+            industry
 
-renamed as (
+        from source
 
-    select
-        tenant_id,
-        tenant_company_name,
-        customer_segment,
-        annual_contract_value,
-        data_quality_nps,
-        industry
+    )
 
-    from source
-
-)
-
-select * from renamed
+select *
+from renamed
