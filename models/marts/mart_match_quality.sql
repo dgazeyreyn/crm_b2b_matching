@@ -9,7 +9,7 @@ with
 
     crm as (
         -- CRM account dimensional attributes (region, country, tenant_id)
-        select crm_account_id, crm_account_region, crm_account_country, tenant_id
+        select crm_account_id, crm_account_region, crm_account_country, tenant_id, crm_account_headcount
         from {{ ref("dim_crm_account") }}
     ),
 
@@ -45,6 +45,7 @@ with
             c.crm_account_region,
             c.crm_account_country,
             c.tenant_id,
+            c.crm_account_headcount,
 
             -- bring in ZI attributes
             z.zi_company_region,
