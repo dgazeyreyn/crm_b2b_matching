@@ -9,7 +9,7 @@ with
 
     crm as (
         -- CRM account dimensional attributes (region, country, tenant_id)
-        select crm_account_id, crm_account_region, crm_account_country, tenant_id, crm_account_headcount
+        select crm_account_id, crm_account_region, crm_account_country, tenant_id
         from {{ ref("dim_crm_account") }}
     ),
 
@@ -45,7 +45,6 @@ with
             c.crm_account_region,
             c.crm_account_country,
             c.tenant_id,
-            c.crm_account_headcount,
 
             -- bring in ZI attributes
             z.zi_company_region,
@@ -74,7 +73,18 @@ with
                     lower(trim(c.crm_account_region)) = lower(trim(z.zi_company_region))
                 then false
                 else true
-            end as match_region_mismatch
+            end as match_region_mismatch,
+
+            -- optional validation fields
+            v.manual_validation_result,
+            case
+                when v.manual_validation_result is not null then true else false
+            end as is_validated,
+            case
+                when v.manual_validation_result in ('INCORRECT', 'no_match')
+                then true
+                else false
+            end as validation_mismatch
 
         from matches m
         left join crm c on m.crm_account_id = c.crm_account_id
