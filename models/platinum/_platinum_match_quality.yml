@@ -25,7 +25,7 @@ models:
         tests:
           - not_null
 
-      - name: tenant_name
+      - name: tenant_company_name
         description: Human-readable tenant name.
 
       - name: customer_segment
