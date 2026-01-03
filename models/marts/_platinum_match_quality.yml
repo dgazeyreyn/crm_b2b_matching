@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: platinum_match_quality
+    description: >
+      Platinum analytical model that evaluates CRM → ZoomInfo match quality
+      in the presence of known data defects. This model brings together
+      match confidence signals, region alignment issues, and upstream company
+      data quality defects to surface algorithm overconfidence, segment risk,
+      and tenant exposure. Designed for direct BI consumption (Tableau-ready).
+
+    columns:
+      - name: crm_account_id
+        description: Unique identifier for the CRM account being matched.
+        tests:
+          - not_null
+
+      - name: zi_company_id
+        description: ZoomInfo company identifier matched to the CRM account.
+        tests:
+          - not_null
+
+      - name: tenant_id
+        description: Identifier for the tenant owning the CRM account.
+        tests:
+          - not_null
+
+      - name: tenant_name
+        description: Human-readable tenant name.
+
+      - name: customer_segment
+        description: >
+          Customer segment associated with the tenant (e.g. SMB, MM, ENT).
+          Used heavily for risk stratification and comparative analysis.
+
+      - name: match_confidence_score
+        description: >
+          Algorithm-generated confidence score representing how strongly
+          the system believes the CRM account matches the ZoomInfo company.
+          Higher values indicate stronger confidence.
+
+      - name: match_confidence_bucket
+        description: >
+          Discrete confidence band derived from match_confidence_score.
+          Buckets are defined as:
+          - low (<50)
+          - medium (50–79)
+          - high (80+)
+
+      - name: match_region_mismatch
+        description: >
+          Boolean flag indicating whether the CRM account region does not
+          match the resolved ZoomInfo company region.
+
+      - name: city_region_inconsistent
+        description: >
+          Boolean flag indicating whether the ZoomInfo company record contains
+          an invalid city → region mapping (e.g. Chicago, Massachusetts).
+          This represents upstream company data quality defects.
+        tests:
+          - not_null
+
+      - name: has_known_defect
+        description: >
+          Composite defect indicator. True when either a match defect
+          (region mismatch) or a company data defect (city-region inconsistency)
+          is present.
+
+      - name: defect_count_per_match
+        description: >
+          Count of known defects associated with the match. Values range from:
+          - 0 (no defects)
+          - 1 (single defect)
+          - 2 (both match and company defects present)
+
+      - name: is_high_confidence_with_defect
+        description: >
+          Flag indicating potentially dangerous overconfidence by the
+          matching algorithm. True when match confidence is high (80+)
+          despite the presence of one or more known defects.
