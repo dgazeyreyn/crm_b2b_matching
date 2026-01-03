@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: platinum_support_vs_match_quality_metrics
+    description: >
+      Platinum-level analytical model that evaluates the relationship between
+      CRM → ZoomInfo match quality defects and customer support behavior.
+      The model combines match-level defects, company-level data defects,
+      and support ticket signals to assess whether tenants experiencing
+      higher defect exposure also raise more match-related complaints.
+
+    columns:
+      - name: tenant_id
+        description: "Unique identifier for the tenant."
+
+      - name: tenant_name
+        description: "Human-readable tenant name."
+
+      - name: customer_segment
+        description: >
+          Tenant customer segment (SMB, MM, ENT) used to compare
+          match quality exposure and support behavior across segments.
+
+      - name: total_matches
+        description: "Total number of CRM → ZoomInfo matches evaluated for the tenant."
+
+      - name: total_defect_matches
+        description: >
+          Count of matches with at least one known defect, including
+          region mismatch or company city–region inconsistency.
+
+      - name: high_confidence_defect_matches
+        description: >
+          Count of matches where match confidence is high (≥ 90) despite
+          the presence of known defects, indicating potential algorithm
+          overconfidence.
+
+      - name: total_support_incidents
+        description: >
+          Total number of support incidents raised by the tenant
+          across all feedback themes.
+
+      - name: match_quality_complaint_incidents
+        description: >
+          Total number of support incidents related specifically
+          to match quality issues (e.g. wrong company matched,
+          no match found, match accuracy).
+
+      - name: avg_ticket_severity
+        description: >
+          Average severity score of support tickets raised by the tenant.
+
+      - name: defect_rate
+        description: >
+          Proportion of matches with known defects out of all matches
+          evaluated for the tenant.
+
+      - name: high_confidence_defect_rate
+        description: >
+          Proportion of matches that are both high confidence and
+          known to be defective, highlighting algorithm risk.
+
+      - name: complaints_per_match
+        description: >
+          Ratio of match-quality-related support incidents to total
+          matches, used as a normalized complaint intensity metric.
