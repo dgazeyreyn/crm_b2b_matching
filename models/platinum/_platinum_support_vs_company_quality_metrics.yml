@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: platinum_support_vs_company_quality_metrics
+    description: >
+      Tenant-level Platinum model that evaluates alignment between ZoomInfo
+      company data quality defects and customer support complaints related to
+      poor or outdated company information.
+
+      This model answers whether tenants exposed to structurally incorrect
+      company attributes (e.g. invalid city–region mappings) are more likely
+      to raise support tickets about data quality issues.
+
+      Designed for executive reporting, trust analysis, and cross-functional
+      alignment between data quality and customer experience teams.
+
+    columns:
+      - name: tenant_id
+        description: >
+          Unique identifier for the tenant (ZoomInfo customer).
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_name
+        description: >
+          Human-readable tenant (company) name.
+
+      - name: customer_segment
+        description: >
+          ZoomInfo customer segment classification.
+          One of: SMB (Small Business), MM (Mid-Market), ENT (Enterprise).
+        tests:
+          - accepted_values:
+              values: ["SMB", "MM", "ENT"]
+
+      - name: total_companies_evaluated
+        description: >
+          Total number of ZoomInfo company records associated with the tenant.
+          Represents the total surface area for potential company data defects.
+
+      - name: city_region_inconsistent_count
+        description: >
+          Number of company records with invalid or impossible city-to-region
+          mappings (e.g. Chicago, Massachusetts).
+
+      - name: company_quality_defect_rate
+        description: >
+          Proportion of evaluated company records that contain inconsistent
+          city–region relationships.
+          Calculated as city_region_inconsistent_count / total_companies_evaluated.
+          Serves as the primary exposure metric for company data quality issues.
+
+      - name: data_quality_ticket_count
+        description: >
+          Total number of customer support tickets associated with company
+          data quality complaints (e.g. poor data quality, outdated company info).
+
+      - name: data_quality_ticket_frequency
+        description: >
+          Sum of ticket frequency values for data-quality-related support tickets.
+          Represents the intensity and repetition of customer complaints about
+          company data issues.
+
+      - name: support_company_alignment_score
+        description: >
+          Derived indicator reflecting whether high company data defect exposure
+          aligns with elevated customer support complaints.
+          Intended for correlation analysis, tenant ranking, and segment-level
+          comparison rather than binary evaluation.
