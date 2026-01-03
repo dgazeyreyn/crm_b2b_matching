@@ -12,20 +12,28 @@ with
         from {{ ref("platinum_tenant_exposure_metrics") }} e
     ),
 
-    tenant_segments as (select tenant_id, customer_segment from {{ ref("dim_tenant") }})
+    tenant_segments as (
+        select tenant_id, customer_segment from {{ ref("dim_tenant") }}
+    ),
 
-select
-    s.customer_segment,
+    final as (
 
-    count(*) as tenant_count,
+        select
+            s.customer_segment,
 
-    avg(e.company_data_error_rate) as avg_company_data_error_rate,
-    avg(e.match_alignment_error_rate) as avg_match_alignment_error_rate,
-    avg(e.affected_match_rate) as avg_affected_match_rate,
+            count(*) as tenant_count,
 
-    countif(e.affected_match_rate >= 0.50) as high_risk_tenants
+            avg(e.company_data_error_rate) as avg_company_data_error_rate,
+            avg(e.match_alignment_error_rate) as avg_match_alignment_error_rate,
+            avg(e.affected_match_rate) as avg_affected_match_rate,
 
-from tenant_exposure e
-join tenant_segments s on e.tenant_id = s.tenant_id
+            countif(e.affected_match_rate >= 0.50) as high_risk_tenants
 
-group by s.customer_segment
+        from tenant_exposure e
+        join tenant_segments s on e.tenant_id = s.tenant_id
+
+        group by s.customer_segment
+    )
+
+select *
+from final

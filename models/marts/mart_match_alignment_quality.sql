@@ -1,20 +1,36 @@
 {{ config(materialized="table") }}
 
-select
-    m.crm_account_id,
-    m.zi_company_id,
+with
+    matches as (select crm_account_id, zi_company_id from {{ ref("fact_match") }}),
 
-    a.tenant_id,
+    crm as (
+        select tenant_id, crm_account_region, crm_account_id
+        from {{ ref("dim_crm_account") }}
+    ),
 
-    a.crm_account_region as crm_region,
-    c.zi_company_region as company_region,
+    zi as (select zi_company_region, zi_company_id from {{ ref("dim_company") }}),
 
-    case
-        when a.crm_account_region = c.zi_company_region then false else true
-    end as region_mismatch,
+    final as (
 
-    current_timestamp() as loaded_at
+        select
+            m.crm_account_id,
+            m.zi_company_id,
 
-from {{ ref("fact_match") }} m
-join {{ ref("dim_crm_account") }} a on m.crm_account_id = a.crm_account_id
-join {{ ref("dim_company") }} c on m.zi_company_id = c.zi_company_id
+            a.tenant_id,
+
+            a.crm_account_region as crm_region,
+            c.zi_company_region as company_region,
+
+            case
+                when a.crm_account_region = c.zi_company_region then false else true
+            end as region_mismatch,
+
+            current_timestamp() as loaded_at
+
+        from matches m
+        join crm a on m.crm_account_id = a.crm_account_id
+        join zi c on m.zi_company_id = c.zi_company_id
+    )
+
+select *
+from final

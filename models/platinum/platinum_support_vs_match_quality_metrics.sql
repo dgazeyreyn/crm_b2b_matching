@@ -1,6 +1,30 @@
 {{ config(materialized="table") }}
 
 with
+    match_quality as (select * from {{ ref("mart_match_quality") }}),
+
+    company_quality as (
+
+        select city_region_inconsistent, zi_company_id
+        from {{ ref("mart_company_quality") }}
+    ),
+
+    crm as (
+
+        select tenant_id, crm_account_id from {{ ref("dim_crm_account") }}
+    ),
+
+    tenants as (
+
+        select tenant_company_name, customer_segment, tenant_id from {{ ref("dim_tenant") }}
+    ),
+
+    support_quality as (
+
+        select tenant_id, frequency, is_match_quality_complaint, avg_severity
+        from {{ ref("mart_support_quality") }}
+    ),
+
     match_plus_company_quality as (
 
         select
@@ -23,9 +47,8 @@ with
                 and (mq.match_region_mismatch or cq.city_region_inconsistent)
             ) as is_high_confidence_with_defect
 
-        from {{ ref("mart_match_quality") }} mq
-        left join
-            {{ ref("mart_company_quality") }} cq on mq.zi_company_id = cq.zi_company_id
+        from match_quality mq
+        left join company_quality cq on mq.zi_company_id = cq.zi_company_id
     ),
 
     match_quality_by_tenant as (
@@ -52,8 +75,8 @@ with
             ) as high_confidence_defect_matches
 
         from match_plus_company_quality mpq
-        join {{ ref("dim_crm_account") }} dca on mpq.crm_account_id = dca.crm_account_id
-        join {{ ref("dim_tenant") }} dt on dca.tenant_id = dt.tenant_id
+        join crm dca on mpq.crm_account_id = dca.crm_account_id
+        join tenants dt on dca.tenant_id = dt.tenant_id
 
         group by 1, 2, 3
     ),
@@ -71,32 +94,38 @@ with
 
             avg(avg_severity) as avg_ticket_severity
 
-        from {{ ref("mart_support_quality") }}
+        from support_quality
         group by 1
+    ),
+
+    final as (
+
+        select
+            mq.tenant_id,
+            mq.tenant_company_name,
+            mq.customer_segment,
+
+            mq.total_matches,
+            mq.total_defect_matches,
+            mq.high_confidence_defect_matches,
+
+            sq.total_support_incidents,
+            sq.match_quality_complaint_incidents,
+            sq.avg_ticket_severity,
+
+            safe_divide(mq.total_defect_matches, mq.total_matches) as defect_rate,
+
+            safe_divide(
+                mq.high_confidence_defect_matches, mq.total_matches
+            ) as high_confidence_defect_rate,
+
+            safe_divide(
+                sq.match_quality_complaint_incidents, mq.total_matches
+            ) as complaints_per_match
+
+        from match_quality_by_tenant mq
+        left join support_quality_by_tenant sq on mq.tenant_id = sq.tenant_id
     )
 
-select
-    mq.tenant_id,
-    mq.tenant_company_name,
-    mq.customer_segment,
-
-    mq.total_matches,
-    mq.total_defect_matches,
-    mq.high_confidence_defect_matches,
-
-    sq.total_support_incidents,
-    sq.match_quality_complaint_incidents,
-    sq.avg_ticket_severity,
-
-    safe_divide(mq.total_defect_matches, mq.total_matches) as defect_rate,
-
-    safe_divide(
-        mq.high_confidence_defect_matches, mq.total_matches
-    ) as high_confidence_defect_rate,
-
-    safe_divide(
-        sq.match_quality_complaint_incidents, mq.total_matches
-    ) as complaints_per_match
-
-from match_quality_by_tenant mq
-left join support_quality_by_tenant sq on mq.tenant_id = sq.tenant_id
+select *
+from final

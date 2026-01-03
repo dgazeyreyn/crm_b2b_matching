@@ -1,19 +1,38 @@
 {{ config(materialized="table") }}
 
-select
-    t.customer_segment,
+with
+    exposure as (
 
-    sum(h.annual_contract_value) as total_acv,
+        select affected_match_rate, tenant_id
+        from {{ ref("platinum_tenant_exposure_metrics") }}
+    ),
 
-    sum(h.annual_contract_value * e.affected_match_rate) as exposed_acv,
+    health as (
+        select annual_contract_value, tenant_id from {{ ref("fact_customer_health") }}
+    ),
 
-    safe_divide(
-        sum(h.annual_contract_value * e.affected_match_rate),
-        sum(h.annual_contract_value)
-    ) as pct_acv_exposed
+    tenants as (select tenant_id, customer_segment from {{ ref("dim_tenant") }}),
 
-from {{ ref("platinum_tenant_exposure_metrics") }} e
-join {{ ref("fact_customer_health") }} h on e.tenant_id = h.tenant_id
-join {{ ref("dim_tenant") }} t on e.tenant_id = t.tenant_id
+    final as (
 
-group by t.customer_segment
+        select
+            t.customer_segment,
+
+            sum(h.annual_contract_value) as total_acv,
+
+            sum(h.annual_contract_value * e.affected_match_rate) as exposed_acv,
+
+            safe_divide(
+                sum(h.annual_contract_value * e.affected_match_rate),
+                sum(h.annual_contract_value)
+            ) as pct_acv_exposed
+
+        from exposure e
+        join health h on e.tenant_id = h.tenant_id
+        join tenants t on e.tenant_id = t.tenant_id
+
+        group by t.customer_segment
+    )
+
+select *
+from final

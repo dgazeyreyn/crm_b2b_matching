@@ -47,37 +47,44 @@ with
 
     tenants as (
 
-        select tenant_id, tenant_company_name, customer_segment from {{ ref("dim_tenant") }}
+        select tenant_id, tenant_company_name, customer_segment
+        from {{ ref("dim_tenant") }}
 
+    ),
+
+    final as (
+
+        select
+            t.tenant_id,
+            t.tenant_company_name,
+            t.customer_segment,
+
+            tcq.total_matched_companies,
+            tcq.inconsistent_company_count,
+
+            safe_divide(
+                tcq.inconsistent_company_count, tcq.total_matched_companies
+            ) as company_quality_defect_rate,
+
+            tt.data_quality_nps,
+
+            case
+                when tcq.inconsistent_company_count > 0 and tt.data_quality_nps >= 7
+                then 'High Exposure / High Trust'
+
+                when tcq.inconsistent_company_count > 0 and tt.data_quality_nps < 7
+                then 'High Exposure / Low Trust'
+
+                when tcq.inconsistent_company_count = 0 and tt.data_quality_nps < 7
+                then 'Low Exposure / Low Trust'
+
+                else 'Low Exposure / High Trust'
+            end as trust_exposure_category
+
+        from tenant_company_quality tcq
+        join tenants t on tcq.tenant_id = t.tenant_id
+        left join tenant_trust tt on tcq.tenant_id = tt.tenant_id
     )
 
-select
-    t.tenant_id,
-    t.tenant_company_name,
-    t.customer_segment,
-
-    tcq.total_matched_companies,
-    tcq.inconsistent_company_count,
-
-    safe_divide(
-        tcq.inconsistent_company_count, tcq.total_matched_companies
-    ) as company_quality_defect_rate,
-
-    tt.data_quality_nps,
-
-    case
-        when tcq.inconsistent_company_count > 0 and tt.data_quality_nps >= 7
-        then 'High Exposure / High Trust'
-
-        when tcq.inconsistent_company_count > 0 and tt.data_quality_nps < 7
-        then 'High Exposure / Low Trust'
-
-        when tcq.inconsistent_company_count = 0 and tt.data_quality_nps < 7
-        then 'Low Exposure / Low Trust'
-
-        else 'Low Exposure / High Trust'
-    end as trust_exposure_category
-
-from tenant_company_quality tcq
-join tenants t on tcq.tenant_id = t.tenant_id
-left join tenant_trust tt on tcq.tenant_id = tt.tenant_id
+select *
+from final
