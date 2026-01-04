@@ -31,6 +31,12 @@ models:
           - accepted_values:
               values: ["SMB", "MM", "ENT"]
 
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          company trust, used to assess financial exposure
+          related to company trust as measured by NPS.
+
       - name: total_matched_companies
         description: >
           Total number of CRM → ZoomInfo company matches associated with the tenant.

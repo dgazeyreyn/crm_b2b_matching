@@ -3,29 +3,19 @@
 with
     match_quality as (select * from {{ ref("mart_match_quality") }}),
 
-    company_quality as (
-
-        select city_region_inconsistent, zi_company_id
-        from {{ ref("mart_company_quality") }}
-    ),
-
-    crm as (
-
-        select tenant_id, crm_account_id from {{ ref("dim_crm_account") }}
-    ),
+    crm as (select tenant_id, crm_account_id from {{ ref("dim_crm_account") }}),
 
     tenants as (
-
-        select tenant_company_name, customer_segment, tenant_id from {{ ref("dim_tenant") }}
+        select tenant_id, tenant_company_name, customer_segment, annual_contract_value
+        from {{ ref("dim_tenant") }}
     ),
 
     support_quality as (
-
         select tenant_id, frequency, is_match_quality_complaint, avg_severity
         from {{ ref("mart_support_quality") }}
     ),
 
-    match_plus_company_quality as (
+    match_quality_only as (
 
         select
             mq.crm_account_id,
@@ -34,21 +24,14 @@ with
             mq.match_confidence_score,
             mq.match_region_mismatch,
 
-            -- company quality enrichment
-            cq.city_region_inconsistent,
-
-            -- derived defect flags
-            (
-                mq.match_region_mismatch or cq.city_region_inconsistent
-            ) as has_known_defect,
+            -- derived match-quality defect flags
+            mq.match_region_mismatch as has_known_defect,
 
             (
-                mq.match_confidence_score >= 90
-                and (mq.match_region_mismatch or cq.city_region_inconsistent)
+                mq.match_confidence_score >= 90 and mq.match_region_mismatch
             ) as is_high_confidence_with_defect
 
         from match_quality mq
-        left join company_quality cq on mq.zi_company_id = cq.zi_company_id
     ),
 
     match_quality_by_tenant as (
@@ -57,28 +40,23 @@ with
             dca.tenant_id,
             dt.tenant_company_name,
             dt.customer_segment,
+            dt.annual_contract_value,
 
             count(*) as total_matches,
 
             sum(
                 case when match_region_mismatch then 1 else 0 end
-            ) as region_mismatch_count,
-
-            sum(
-                case when city_region_inconsistent then 1 else 0 end
-            ) as company_data_defect_count,
-
-            sum(case when has_known_defect then 1 else 0 end) as total_defect_matches,
+            ) as total_defect_matches,
 
             sum(
                 case when is_high_confidence_with_defect then 1 else 0 end
             ) as high_confidence_defect_matches
 
-        from match_plus_company_quality mpq
-        join crm dca on mpq.crm_account_id = dca.crm_account_id
+        from match_quality_only mq
+        join crm dca on mq.crm_account_id = dca.crm_account_id
         join tenants dt on dca.tenant_id = dt.tenant_id
 
-        group by 1, 2, 3
+        group by 1, 2, 3, 4
     ),
 
     support_quality_by_tenant as (
@@ -104,6 +82,7 @@ with
             mq.tenant_id,
             mq.tenant_company_name,
             mq.customer_segment,
+            mq.annual_contract_value,
 
             mq.total_matches,
             mq.total_defect_matches,

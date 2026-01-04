@@ -53,7 +53,7 @@ with
 
     tenants as (
 
-        select tenant_id, tenant_company_name, customer_segment
+        select tenant_id, tenant_company_name, customer_segment, annual_contract_value
         from {{ ref("dim_tenant") }}
 
     ),
@@ -64,6 +64,7 @@ with
             t.tenant_id,
             t.tenant_company_name,
             t.customer_segment,
+            t.annual_contract_value,
 
             tm.total_matches,
             tm.defect_match_count,

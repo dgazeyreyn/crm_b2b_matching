@@ -11,7 +11,7 @@ with
     crm as (select tenant_id, crm_account_id from {{ ref("dim_crm_account") }}),
 
     tenants as (
-        select tenant_company_name, customer_segment, tenant_id
+        select tenant_company_name, customer_segment, tenant_id, annual_contract_value
         from {{ ref("dim_tenant") }}
     ),
 
@@ -27,6 +27,7 @@ with
             dca.tenant_id,
             dt.tenant_company_name,
             dt.customer_segment,
+            dt.annual_contract_value,
 
             count(*) as total_companies_evaluated,
 
@@ -42,7 +43,7 @@ with
 
         join tenants dt on dca.tenant_id = dt.tenant_id
 
-        group by 1, 2, 3
+        group by 1, 2, 3, 4
     ),
 
     support_quality_by_tenant as (
@@ -69,6 +70,7 @@ with
             cqt.tenant_id,
             cqt.tenant_company_name,
             cqt.customer_segment,
+            cqt.annual_contract_value,
 
             cqt.total_companies_evaluated,
             cqt.city_region_inconsistent_count,

@@ -30,6 +30,11 @@ models:
           - accepted_values:
               values: ["SMB", "MM", "ENT"]
 
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          support tickets related to match quality issues.
+
       - name: total_matches_evaluated
         description: >
           Total number of CRM → ZoomInfo matches associated with the tenant.

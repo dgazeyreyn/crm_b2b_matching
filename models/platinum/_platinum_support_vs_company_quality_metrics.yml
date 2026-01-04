@@ -34,6 +34,12 @@ models:
           - accepted_values:
               values: ["SMB", "MM", "ENT"]
 
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          the support tickets, used to assess financial exposure
+          related to company data quality complaints.
+
       - name: total_companies_evaluated
         description: >
           Total number of ZoomInfo company records associated with the tenant.

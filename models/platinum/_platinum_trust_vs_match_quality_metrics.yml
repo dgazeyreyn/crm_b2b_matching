@@ -21,6 +21,12 @@ models:
           Tenant customer segment (SMB, MM, ENT), used to analyze
           trust and defect exposure differences across segments.
 
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          company trust, used to assess financial exposure
+          related to company trust as measured by NPS.
+
       - name: total_matches
         description: >
           Total number of CRM → ZoomInfo matches evaluated for the tenant.
