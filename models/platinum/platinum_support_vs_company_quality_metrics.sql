@@ -1,74 +1,101 @@
 {{ config(materialized="table") }}
 
 with
+    company_quality as (
+        select city_region_inconsistent, zi_company_id
+        from {{ ref("mart_company_quality") }}
+    ),
+
+    matches as (select zi_company_id, crm_account_id from {{ ref("fact_match") }}),
+
+    crm as (select tenant_id, crm_account_id from {{ ref("dim_crm_account") }}),
+
+    tenants as (
+        select tenant_company_name, customer_segment, tenant_id, annual_contract_value
+        from {{ ref("dim_tenant") }}
+    ),
+
     support_quality as (
+
+        select tenant_id, frequency, is_data_quality_complaint
+        from {{ ref("mart_support_quality") }}
+    ),
+
+    company_quality_by_tenant as (
+
+        select
+            dca.tenant_id,
+            dt.tenant_company_name,
+            dt.customer_segment,
+            dt.annual_contract_value,
+
+            count(*) as total_companies_evaluated,
+
+            sum(
+                case when mcq.city_region_inconsistent then 1 else 0 end
+            ) as city_region_inconsistent_count
+
+        from company_quality mcq
+
+        join matches fm on mcq.zi_company_id = fm.zi_company_id
+
+        join crm dca on fm.crm_account_id = dca.crm_account_id
+
+        join tenants dt on dca.tenant_id = dt.tenant_id
+
+        group by 1, 2, 3, 4
+    ),
+
+    support_quality_by_tenant as (
 
         select
             tenant_id,
 
-            /* Volume signals */
-            count(distinct ticket_id) as support_ticket_count,
-            sum(frequency) as total_issue_occurrences,
-
-            /* Themed issue intensity */
             sum(
                 case when is_data_quality_complaint then frequency else 0 end
-            ) as data_quality_issue_occurrences
-
-        from {{ ref("mart_support_quality") }}
-        group by tenant_id
-    ),
-
-    company_quality as (
-
-        select
-            a.tenant_id,
-
-            count(distinct c.zi_company_id) as total_companies_seen,
+            ) as data_quality_ticket_frequency,
 
             sum(
-                case when c.city_region_inconsistent then 1 else 0 end
-            ) as company_region_defect_count,
+                case when is_data_quality_complaint then 1 else 0 end
+            ) as data_quality_ticket_count
+
+        from support_quality
+
+        group by 1
+    ),
+
+    final as (
+
+        select
+            cqt.tenant_id,
+            cqt.tenant_company_name,
+            cqt.customer_segment,
+            cqt.annual_contract_value,
+
+            cqt.total_companies_evaluated,
+            cqt.city_region_inconsistent_count,
 
             safe_divide(
-                sum(case when c.city_region_inconsistent then 1 else 0 end),
-                count(distinct c.zi_company_id)
-            ) as company_region_defect_rate
+                cqt.city_region_inconsistent_count, cqt.total_companies_evaluated
+            ) as company_quality_defect_rate,
 
-        from {{ ref("dim_crm_account") }} a
-        join {{ ref("fact_match") }} m on a.crm_account_id = m.crm_account_id
-        join {{ ref("mart_company_quality") }} c on m.zi_company_id = c.zi_company_id
-        group by a.tenant_id
+            coalesce(sqt.data_quality_ticket_count, 0) as data_quality_ticket_count,
+
+            coalesce(
+                sqt.data_quality_ticket_frequency, 0
+            ) as data_quality_ticket_frequency,
+
+            case
+                when
+                    cqt.city_region_inconsistent_count > 0
+                    and coalesce(sqt.data_quality_ticket_frequency, 0) > 0
+                then 1
+                else 0
+            end as support_company_alignment_score
+
+        from company_quality_by_tenant cqt
+        left join support_quality_by_tenant sqt on cqt.tenant_id = sqt.tenant_id
     )
 
-select
-    coalesce(s.tenant_id, c.tenant_id) as tenant_id,
-
-    /* Support signals */
-    s.support_ticket_count,
-    s.total_issue_occurrences,
-    s.data_quality_issue_occurrences,
-
-    /* Exposure signals */
-    c.total_companies_seen,
-    c.company_region_defect_count,
-    c.company_region_defect_rate,
-
-    /* Alignment metrics */
-    safe_divide(
-        s.data_quality_issue_occurrences, c.company_region_defect_count
-    ) as data_quality_complaints_per_defect,
-
-    /* Diagnostic classification */
-    case
-        when s.tenant_id is not null and c.tenant_id is not null
-        then 'complaint_and_defect'
-        when s.tenant_id is null and c.tenant_id is not null
-        then 'defect_no_complaint'
-        when s.tenant_id is not null and c.tenant_id is null
-        then 'complaint_no_defect'
-        else 'no_complaint_no_defect'
-    end as tenant_quality_state
-
-from support_quality s
-full outer join company_quality c on s.tenant_id = c.tenant_id
+select *
+from final

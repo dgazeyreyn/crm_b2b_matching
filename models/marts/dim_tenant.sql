@@ -4,7 +4,13 @@ with
 
     final as (
 
-        select tenant_id, tenant_company_name, customer_segment, industry from src
+        select
+            tenant_id,
+            tenant_company_name,
+            customer_segment,
+            industry,
+            annual_contract_value
+        from src
 
     )
 

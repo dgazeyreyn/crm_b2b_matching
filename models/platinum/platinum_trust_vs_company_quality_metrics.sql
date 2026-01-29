@@ -1,79 +1,91 @@
+{{ config(materialized="table") }}
+
 with
-    tenant_company_exposure as (
+    company_quality as (
 
-        -- Resolve which tenants are exposed to which ZI companies
-        select a.tenant_id, m.crm_account_id, m.zi_company_id
+        select mcq.zi_company_id, mcq.city_region_inconsistent
+        from {{ ref("mart_company_quality") }} mcq
 
-        from {{ ref("fact_match") }} m
-        join {{ ref("dim_crm_account") }} a on m.crm_account_id = a.crm_account_id
+    ),
+
+    matches as (
+
+        select fm.crm_account_id, fm.zi_company_id from {{ ref("fact_match") }} fm
+
+    ),
+
+    crm_accounts as (
+
+        select crm_account_id, tenant_id from {{ ref("dim_crm_account") }}
+
     ),
 
     tenant_company_quality as (
 
-        -- Attach company quality signals
-        select e.tenant_id, e.zi_company_id, cq.city_region_inconsistent
-
-        from tenant_company_exposure e
-        join {{ ref("mart_company_quality") }} cq on e.zi_company_id = cq.zi_company_id
-    ),
-
-    company_quality_by_tenant as (
-
-        -- Aggregate company quality exposure per tenant
         select
-            tenant_id,
+            ca.tenant_id,
 
-            count(distinct zi_company_id) as exposed_company_count,
+            count(*) as total_matched_companies,
 
             sum(
-                case when city_region_inconsistent = true then 1 else 0 end
-            ) as inconsistent_company_count,
+                case when cq.city_region_inconsistent then 1 else 0 end
+            ) as inconsistent_company_count
 
-            safe_divide(
-                sum(case when city_region_inconsistent = true then 1 else 0 end),
-                count(distinct zi_company_id)
-            ) as inconsistent_company_exposure_rate
+        from matches m
+        join company_quality cq on m.zi_company_id = cq.zi_company_id
+        join crm_accounts ca on m.crm_account_id = ca.crm_account_id
 
-        from tenant_company_quality
-        group by tenant_id
+        group by ca.tenant_id
+
     ),
 
     tenant_trust as (
 
-        -- Trust & commercial context (snapshot)
-        select tenant_id, data_quality_nps, annual_contract_value
+        select tenant_id, data_quality_nps from {{ ref("fact_customer_health") }}
 
-        from {{ ref("fact_customer_health") }}
+    ),
+
+    tenants as (
+
+        select tenant_id, tenant_company_name, customer_segment, annual_contract_value
+        from {{ ref("dim_tenant") }}
+
+    ),
+
+    final as (
+
+        select
+            t.tenant_id,
+            t.tenant_company_name,
+            t.customer_segment,
+            t.annual_contract_value,
+
+            tcq.total_matched_companies,
+            tcq.inconsistent_company_count,
+
+            safe_divide(
+                tcq.inconsistent_company_count, tcq.total_matched_companies
+            ) as company_quality_defect_rate,
+
+            tt.data_quality_nps,
+
+            case
+                when tcq.inconsistent_company_count > 0 and tt.data_quality_nps >= 7
+                then 'High Exposure / High Trust'
+
+                when tcq.inconsistent_company_count > 0 and tt.data_quality_nps < 7
+                then 'High Exposure / Low Trust'
+
+                when tcq.inconsistent_company_count = 0 and tt.data_quality_nps < 7
+                then 'Low Exposure / Low Trust'
+
+                else 'Low Exposure / High Trust'
+            end as trust_exposure_category
+
+        from tenant_company_quality tcq
+        join tenants t on tcq.tenant_id = t.tenant_id
+        left join tenant_trust tt on tcq.tenant_id = tt.tenant_id
     )
 
-select
-    t.tenant_id,
-
-    -- Trust indicators
-    t.data_quality_nps,
-    t.annual_contract_value,
-
-    -- Exposure metrics
-    q.exposed_company_count,
-    q.inconsistent_company_count,
-    q.inconsistent_company_exposure_rate,
-
-    -- Analytical flags / buckets
-    case
-        when q.inconsistent_company_exposure_rate >= 0.50
-        then 'high_exposure'
-        when q.inconsistent_company_exposure_rate >= 0.20
-        then 'moderate_exposure'
-        else 'low_exposure'
-    end as company_quality_exposure_band,
-
-    case
-        when t.data_quality_nps >= 8
-        then 'high_trust'
-        when t.data_quality_nps >= 6
-        then 'neutral_trust'
-        else 'low_trust'
-    end as trust_band
-
-from tenant_trust t
-left join company_quality_by_tenant q on t.tenant_id = q.tenant_id
+select *
+from final

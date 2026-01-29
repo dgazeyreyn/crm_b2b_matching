@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: platinum_support_vs_match_quality_metrics
+    description: >
+      Tenant-level Platinum model that evaluates alignment between CRM → ZoomInfo
+      match quality defects and customer support complaints related to match accuracy.
+      This model answers whether tenants experiencing higher rates of match failures
+      are more likely to raise support tickets about incorrect or missing matches.
+
+      Designed for executive reporting and support-to-data alignment analysis.
+
+    columns:
+      - name: tenant_id
+        description: >
+          Unique identifier for the tenant (ZoomInfo customer).
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_name
+        description: >
+          Human-readable tenant (company) name.
+
+      - name: customer_segment
+        description: >
+          ZoomInfo customer segment classification.
+          One of: SMB (Small Business), MM (Mid-Market), ENT (Enterprise).
+        tests:
+          - accepted_values:
+              values: ["SMB", "MM", "ENT"]
+
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          support tickets related to match quality issues.
+
+      - name: total_matches_evaluated
+        description: >
+          Total number of CRM → ZoomInfo matches associated with the tenant.
+          Represents the total surface area for potential match defects.
+
+      - name: match_region_mismatch_count
+        description: >
+          Number of matches where the CRM account region does not resolve
+          to the same region as the matched ZoomInfo company.
+
+      - name: match_quality_defect_rate
+        description: >
+          Proportion of evaluated matches that resolve to an incorrect region.
+          Calculated as match_region_mismatch_count / total_matches_evaluated.
+          Serves as the primary exposure metric for match quality issues.
+
+      - name: match_quality_ticket_count
+        description: >
+          Total number of customer support tickets associated with match-quality
+          complaints (e.g. match accuracy, wrong company matched, no match found).
+
+      - name: match_quality_ticket_frequency
+        description: >
+          Sum of ticket frequency values for match-quality-related support tickets.
+          Represents the intensity of match-related customer complaints.
+
+      - name: support_match_alignment_score
+        description: >
+          Derived indicator reflecting whether high match defect exposure aligns
+          with elevated customer support complaints. Intended for correlation,
+          ranking, and segmentation analysis rather than strict pass/fail logic.

@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: mart_support_quality
+    description: >
+      One row per support ticket per tenant, enriched with feedback theme
+      classifications and customer attributes. This model translates
+      raw support interactions into structured signals that can be
+      analyzed alongside data quality and match quality defects.
+
+    columns:
+      - name: ticket_id
+        description: Unique identifier for the support ticket.
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_id
+        description: Identifier for the tenant submitting the support ticket.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_tenant')
+              field: tenant_id
+
+      - name: tenant_company_name
+        description: Name of the tenant company.
+
+      - name: customer_segment
+        description: >
+          Customer segment classification for the tenant
+          (e.g. SMB, MM, ENT).
+
+      - name: date
+        description: Calendar date the support ticket was logged.
+        tests:
+          - not_null
+
+      - name: date_key
+        description: Surrogate date key corresponding to the support ticket date.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_date')
+              field: date_key
+
+      - name: feedback_theme
+        description: >
+          Categorized theme associated with the support ticket,
+          derived from customer-reported issue types.
+
+      - name: frequency
+        description: >
+          Number of occurrences or records associated with the support
+          ticket. Used as a weighting factor when aggregating support volume.
+
+      - name: avg_severity
+        description: >
+          Average severity score assigned to the support ticket,
+          representing the perceived impact of the issue.
+
+      - name: resolution_days
+        description: >
+          Number of days taken to resolve the support ticket.
+
+      - name: is_data_quality_complaint
+        description: >
+          Indicates whether the support ticket relates to general
+          data quality issues (e.g. poor or outdated company data).
+
+      - name: is_match_quality_complaint
+        description: >
+          Indicates whether the support ticket relates specifically
+          to match accuracy issues (e.g. wrong company matched or no match found).
+
+      - name: is_quality_related_complaint
+        description: >
+          Indicates whether the support ticket relates to any form
+          of data or match quality issue. Serves as a broad quality
+          signal for downstream analysis.

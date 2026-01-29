@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: mart_match_quality
+    description: >
+      One row per CRM → ZoomInfo match attempt, enriched with CRM attributes,
+      ZoomInfo attributes, algorithm confidence, and optional manual validation.
+      This model is the primary source for evaluating whether the matching
+      algorithm is overconfident, underconfident, or misaligned with reality.
+
+    columns:
+      - name: match_quality_id
+        description: >
+          Surrogate primary key representing a unique match attempt
+          (CRM account × ZI company × match date × algorithm version).
+        data_tests:
+          - not_null
+          - unique
+
+      - name: crm_account_id
+        description: Unique identifier for the CRM account being matched.
+        data_tests:
+          - not_null
+
+      - name: zi_company_id
+        description: Unique identifier for the matched ZoomInfo company.
+        data_tests:
+          - not_null
+
+      - name: tenant_id
+        description: >
+          Identifier for the tenant (customer) that owns the CRM account.
+          Enables aggregation of match quality by customer.
+        data_tests:
+          - not_null
+
+      - name: match_date
+        description: Date on which the match was produced.
+
+      - name: algorithm_version
+        description: >
+          Version of the matching algorithm that produced this match.
+          Useful for comparing performance across releases.
+
+      - name: match_confidence_score
+        description: >
+          Algorithm-generated confidence score (0–100) representing
+          how confident the system is that the CRM account and ZI company
+          represent the same real-world entity.
+
+      - name: confidence_bucket
+        description: >
+          Categorical representation of match confidence:
+          HIGH (≥90), MEDIUM (60–89), LOW (<60), or UNKNOWN.
+
+      - name: is_low_confidence
+        description: >
+          Boolean flag indicating whether the match confidence score
+          is below the low-confidence threshold (<60).
+
+      - name: crm_account_region
+        description: Region or state associated with the CRM account.
+
+      - name: zi_company_region
+        description: Region or state associated with the ZoomInfo company.
+
+      - name: match_region_mismatch
+        description: >
+          Indicates whether the CRM account region and ZoomInfo company
+          region do not match. NULL when either region is missing.
+          This is a primary match-quality defect signal.
+
+      - name: crm_account_country
+        description: Country associated with the CRM account.
+
+      - name: zi_company_country
+        description: Country associated with the ZoomInfo company.
+
+      - name: is_validated
+        description: >
+          Indicates whether this match has been manually reviewed
+          by a human validator.
+
+      - name: manual_validation_result
+        description: >
+          Outcome of the manual validation when present
+          (e.g. CORRECT, INCORRECT, no_match).
+
+      - name: validation_mismatch
+        description: >
+          Indicates that a manually validated match was marked as
+          incorrect or no_match by a human validator.

@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: platinum_trust_vs_company_quality_metrics
+    description: >
+      Tenant-level Platinum model that evaluates customer trust (via Data Quality NPS)
+      relative to exposure to underlying company data quality defects. This model
+      quantifies how frequently tenants are affected by inconsistent city-to-region
+      mappings and whether customer trust persists or erodes under high exposure.
+
+      Designed to support executive dashboards, trust vs exposure analysis,
+      and segmentation by customer size (SMB / MM / ENT).
+
+    columns:
+      - name: tenant_id
+        description: >
+          Unique identifier for the tenant (ZoomInfo customer).
+        tests:
+          - not_null
+          - unique
+
+      - name: tenant_name
+        description: >
+          Human-readable tenant (company) name.
+
+      - name: customer_segment
+        description: >
+          ZoomInfo customer segment classification.
+          One of: SMB (Small Business), MM (Mid-Market), ENT (Enterprise).
+        tests:
+          - accepted_values:
+              values: ["SMB", "MM", "ENT"]
+
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          company trust, used to assess financial exposure
+          related to company trust as measured by NPS.
+
+      - name: total_matched_companies
+        description: >
+          Total number of CRM → ZoomInfo company matches associated with the tenant.
+          Represents the tenant's exposure surface to company-level data quality.
+
+      - name: inconsistent_company_count
+        description: >
+          Number of matched companies for which the ZoomInfo city-to-region mapping
+          is inconsistent based on authoritative reference data.
+
+      - name: company_quality_defect_rate
+        description: >
+          Proportion of matched companies with inconsistent city-to-region mappings.
+          Calculated as inconsistent_company_count / total_matched_companies.
+          Serves as the primary exposure metric for company data quality issues.
+
+      - name: data_quality_nps
+        description: >
+          Tenant-reported Data Quality Net Promoter Score (0–10),
+          representing trust in ZoomInfo data quality.
+
+      - name: trust_exposure_category
+        description: >
+          Derived classification combining company data quality exposure and tenant trust.
+          Used for quadrant-style analysis and executive reporting.
+
+          Categories:
+          - High Exposure / High Trust
+          - High Exposure / Low Trust
+          - Low Exposure / High Trust
+          - Low Exposure / Low Trust

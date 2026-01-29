@@ -1,0 +1,91 @@
+version: 2
+
+models:
+  - name: platinum_manual_validation_quality
+    description: >
+      Event-level, analytics-ready model used to evaluate the quality and
+      consistency of manual validation decisions in the presence of known
+      company and match defects. This model serves as the primary semantic
+      source for dashboards assessing validator accuracy, bias, and alignment
+      with objective data quality signals.
+
+    meta:
+      layer: platinum
+      owner: analytics
+      grain: one row per validation event
+      primary_use: tableau_dashboard
+
+    columns:
+      - name: validation_event_id
+        description: >
+          Surrogate key representing a single manual validation event
+          (crm_account_id × zi_company_id × validation_date).
+        tests:
+          - not_null
+          - unique
+
+      - name: validation_date
+        description: >
+          Date the manual validation was performed. This is the event-level
+          time grain for all validation quality analysis.
+
+      - name: validator_name
+        description: >
+          Identifier for the internal validator who reviewed the match.
+          Used for consistency and bias analysis.
+
+      - name: customer_segment
+        description: >
+          Customer segment associated with the CRM account (e.g. SMB, MM, ENT).
+          Used for segment-level validation quality comparisons.
+
+      - name: validation_outcome
+        description: >
+          The validator’s stated outcome for the match ('correct' or 'incorrect').
+
+      - name: is_validation_correct
+        description: >
+          Boolean flag indicating the validator marked the match as correct.
+
+      - name: is_validation_incorrect
+        description: >
+          Boolean flag indicating the validator marked the match as incorrect.
+
+      - name: city_region_inconsistent
+        description: >
+          Indicates whether the ZoomInfo company record contains an invalid
+          city-to-region mapping (e.g. Chicago, Massachusetts).
+
+      - name: match_region_mismatch
+        description: >
+          Indicates whether the CRM account region does not match the resolved
+          ZoomInfo company region.
+
+      - name: has_known_defect
+        description: >
+          Consolidated flag indicating the presence of at least one known
+          data or match defect. Used as the basis for determining the
+          expected validation outcome.
+
+      - name: match_confidence_score
+        description: >
+          Confidence score produced by the matching algorithm for the
+          CRM → ZoomInfo company match.
+
+      - name: algorithm_version
+        description: >
+          Version identifier for the matching algorithm used to generate
+          the match confidence score.
+
+      - name: expected_validation_outcome
+        description: >
+          The analytically expected validation outcome ('correct' or 'incorrect')
+          based solely on the presence or absence of known defects.
+
+      - name: validation_correct_adjusted_flag
+        description: >
+          Indicator used for adjusted validation accuracy analysis.
+          A value of 1 represents a validator decision that aligns with
+          the expected outcome based on known defects (true positive or
+          true negative). A value of 0 represents a validator error
+          (false positive or false negative).

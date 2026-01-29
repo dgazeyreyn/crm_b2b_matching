@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: platinum_trust_vs_match_quality_metrics
+    description: >
+      Platinum-level analytical model evaluating the relationship between
+      CRM → ZoomInfo match quality defects and tenant trust, as measured
+      by Data Quality NPS. The model highlights whether tenants experiencing
+      high exposure to match defects continue to express confidence in
+      ZoomInfo’s data.
+
+    columns:
+      - name: tenant_id
+        description: "Unique identifier for the tenant."
+
+      - name: tenant_name
+        description: "Human-readable tenant name."
+
+      - name: customer_segment
+        description: >
+          Tenant customer segment (SMB, MM, ENT), used to analyze
+          trust and defect exposure differences across segments.
+
+      - name: annual_contract_value
+        description: >
+          Annual Contract Value (ACV) of the tenant associated with
+          company trust, used to assess financial exposure
+          related to company trust as measured by NPS.
+
+      - name: total_matches
+        description: >
+          Total number of CRM → ZoomInfo matches evaluated for the tenant.
+
+      - name: defect_match_count
+        description: >
+          Number of matches with at least one known match defect
+          (e.g. region mismatch).
+
+      - name: high_confidence_defect_count
+        description: >
+          Number of defective matches with high algorithm confidence,
+          indicating potential overconfidence in match scoring.
+
+      - name: defect_rate
+        description: >
+          Proportion of matches containing known defects out of all
+          matches evaluated for the tenant.
+
+      - name: high_confidence_defect_rate
+        description: >
+          Proportion of matches that are both defective and high confidence,
+          highlighting algorithm risk exposure.
+
+      - name: data_quality_nps
+        description: >
+          Tenant-reported Data Quality Net Promoter Score (0–10),
+          serving as a trust indicator.
+
+      - name: trust_exposure_category
+        description: >
+          Categorical interpretation of tenant trust relative to match
+          defect exposure (e.g. High Exposure / High Trust),
+          useful for executive-level storytelling.

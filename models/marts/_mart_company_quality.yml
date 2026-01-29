@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: mart_company_quality
+    description: >
+      One row per ZoomInfo company, enriched with an authoritative
+      city → region reference mapping to identify company-level
+      geographic data quality defects. This model isolates issues
+      inherent to ZoomInfo company data, independent of CRM matching.
+
+    columns:
+      - name: company_quality_id
+        description: >
+          Surrogate primary key for the company quality record,
+          derived from the ZoomInfo company identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: zi_company_id
+        description: Unique identifier for the ZoomInfo company.
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_company')
+              field: zi_company_id
+
+      - name: zi_company_name
+        description: Company name as provided by ZoomInfo.
+
+      - name: zi_company_city
+        description: City associated with the ZoomInfo company record.
+        data_tests:
+          - not_null
+
+      - name: zi_company_region
+        description: Region or state associated with the ZoomInfo company record.
+        data_tests:
+          - not_null
+
+      - name: zi_company_country
+        description: Country associated with the ZoomInfo company record.
+
+      - name: zi_company_headcount
+        description: >
+          Estimated employee headcount from ZoomInfo. Used for
+          comparative analysis against CRM estimates.
+
+      - name: expected_region
+        description: >
+          Region that should correspond to the company’s city based on
+          the authoritative city → region reference mapping.
+          NULL when no reference mapping exists for the city.
+
+      - name: city_region_inconsistent
+        description: >
+          Indicates whether the ZoomInfo company’s city and region
+          combination is inconsistent with the authoritative reference.
+
+          TRUE  → mismatch or missing reference  
+          FALSE → city and region align correctly
+
+        data_tests:
+          - not_null
