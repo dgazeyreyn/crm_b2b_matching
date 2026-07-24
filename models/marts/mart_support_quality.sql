@@ -51,7 +51,7 @@ with
 
             -- complaint classification flags
             case
-                when th.feedback_theme in ('poor_data_quality', 'outdated_company_info')
+                when th.feedback_theme in ('poor_data_quality', 'outdated_company_info', 'data_completeness')
                 then true
                 else false
             end as is_data_quality_complaint,
@@ -69,6 +69,7 @@ with
                     th.feedback_theme in (
                         'poor_data_quality',
                         'outdated_company_info',
+                        'data_completeness',
                         'match_accuracy',
                         'wrong_company_matched',
                         'no_match_found'
