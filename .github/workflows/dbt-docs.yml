@@ -84,6 +84,7 @@ jobs:
           cp -R target site/dbt-docs
           touch site/.nojekyll
 
+      # Confirm generated site contents before publishing
       - name: Verify published site contents
         run: |
           echo "---- site structure ----"
