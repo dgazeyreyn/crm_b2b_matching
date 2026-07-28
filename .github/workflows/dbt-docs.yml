@@ -76,21 +76,21 @@ jobs:
       - name: Build published site
         run: |
           mkdir site
-
-          # Copy landing page
           cp index.html site/
-
-          # Copy common static assets if they exist
           [ -d css ] && cp -R css site/
           [ -d js ] && cp -R js site/
           [ -d assets ] && cp -R assets site/
           [ -d images ] && cp -R images site/
-
-          # Copy dbt docs
           cp -R target site/dbt-docs
-
-          # Prevent GitHub Pages from using Jekyll
           touch site/.nojekyll
+
+      - name: Verify published site contents
+        run: |
+          echo "---- site structure ----"
+          find site -maxdepth 3 -type f | sort
+
+          echo "---- target structure ----"
+          find target -maxdepth 2 -type f | sort
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
