@@ -11,7 +11,7 @@ While the underlying datasets were provided as part of an interview-style case s
 * Design analytics models for downstream BI consumption
 * Translate messy, imperfect data into decision-ready insights
 
-The project is intentionally structured to support **Tableau dashboards** that tell clear, defensible stories about risk, trust, and exposure.
+The project is intentionally structured to support a **case-file-style dashboard report** that tells a clear, defensible narrative about risk, trust, and exposure.
 
 ---
 
@@ -35,7 +35,6 @@ The models in this project are designed to support the following narratives:
 
 * Do customers notice underlying data and match defects?
 * Does exposure to defects correlate with lower trust (NPS)?
-* Are SMB customers acting as an early warning signal?
 
 ### 4. Support Signals vs Data Reality
 
@@ -93,7 +92,7 @@ Curated, BI-ready models aligned directly to analytical narratives.
 
 Design principles:
 
-* Minimal joins required in Tableau
+* Minimal joins required in downstream reporting
 * Clear grain (event-level or tenant-level)
 * One story per model
 
@@ -105,7 +104,7 @@ Key Platinum models include:
 * Trust vs company quality exposure
 * Trust vs match quality exposure
 
-These models intentionally trade flexibility for clarity to support fast, accurate dashboarding.
+These models intentionally trade flexibility for clarity to support fast, accurate reporting.
 
 ---
 
@@ -120,12 +119,12 @@ These models intentionally trade flexibility for clarity to support fast, accura
 
 ## Intended Outputs
 
-The final outputs of this project are Tableau dashboards that:
+The final output of this project is a case-file-style dashboard report that:
 
-* Highlight systemic data and process failures
-* Quantify customer and revenue exposure
-* Contrast algorithmic confidence with real-world correctness
-* Show how customer behavior (support tickets, NPS) reflects underlying data quality
+* Highlights systemic data and process failures
+* Quantifies customer and revenue exposure
+* Contrasts algorithmic confidence with real-world correctness
+* Shows how customer behavior (support tickets, NPS) reflects underlying data quality
 
 ---
 
