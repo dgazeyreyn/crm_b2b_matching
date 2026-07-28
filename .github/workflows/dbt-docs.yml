@@ -73,9 +73,28 @@ jobs:
       - name: dbt docs generate
         run: dbt docs generate --profiles-dir ~/.dbt
 
-      - name: Deploy to GitHub Pages (gh-pages)
+      - name: Build published site
+        run: |
+          mkdir site
+
+          # Copy landing page
+          cp index.html site/
+
+          # Copy common static assets if they exist
+          [ -d css ] && cp -R css site/
+          [ -d js ] && cp -R js site/
+          [ -d assets ] && cp -R assets site/
+          [ -d images ] && cp -R images site/
+
+          # Copy dbt docs
+          cp -R target site/dbt-docs
+
+          # Prevent GitHub Pages from using Jekyll
+          touch site/.nojekyll
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target
+          publish_dir: ./site
           publish_branch: gh-pages
