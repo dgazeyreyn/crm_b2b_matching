@@ -115,6 +115,23 @@
   .retraction{background:#FBF6EC; border:1px solid #E6D9BC; border-left:3px solid var(--amber); border-radius:2px; padding:18px 20px; margin-top:20px; font-size:13.5px; line-height:1.65; color:#5A4426;}
   .retraction b{color:#7A4416;}
 
+  /* flow pills — tech stack / architecture */
+  .flow-row{display:flex; align-items:center; flex-wrap:wrap; gap:0; margin-top:6px;}
+  .flow-pill{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600; letter-spacing:0.02em; color:var(--ink); background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:9px 16px;}
+  .flow-pill .ico{width:8px; height:8px; border-radius:2px; flex-shrink:0;}
+  .flow-arrow{margin:0 10px; color:var(--slate); font-size:15px; flex-shrink:0;}
+  .flow-note{margin-top:16px;}
+  .flow-note a{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--ink); text-decoration:none; border-bottom:1px solid var(--amber); padding-bottom:2px; font-weight:600;}
+  .flow-note a:hover{color:var(--amber);}
+
+  /* CTA buttons */
+  .cta-row{display:flex; gap:14px; margin-top:28px; flex-wrap:wrap;}
+  .btn{display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Sans',sans-serif; font-size:14px; font-weight:600; padding:13px 22px; border-radius:3px; text-decoration:none; letter-spacing:0.01em; transition:opacity 0.15s;}
+  .btn:hover{opacity:0.85;}
+  .btn-primary{background:var(--amber); color:#fff;}
+  .btn-secondary{background:transparent; color:var(--vellum); border:1.5px solid #5A6472;}
+  .btn svg{width:15px; height:15px; flex-shrink:0;}
+
   @media (max-width:900px){
     .hero-grid,.grid-2,.grid-3,.rec-grid{grid-template-columns:1fr;}
     .kpi-grid{grid-template-columns:repeat(2,1fr);}
@@ -137,13 +154,23 @@
       <div>
         <h1>Confidence looks fine. Correctness doesn't &mdash; and the review built to tell them apart misses it <em>85% of the time.</em></h1>
         <p class="dek">A reconciliation of 8,256 CRM&ndash;to&ndash;company matches, 100 manually audited records, and 1,247 tenant accounts. The matching algorithm rates most matches HIGH confidence regardless of whether they're right. The validation process meant to catch the difference is missing it on the matches that matter most. 99.5% of tenant Annual Contract Value (ACV) sits behind a match with at least one known defect. SMB customers &mdash; who get the least confident matches and absorb most of the support load &mdash; are the ones finding out first.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/dgazeyreyn/crm_b2b_matching" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+            View Source Code
+          </a>
+          <a class="btn btn-secondary" href="/crm_b2b_matching/dbt-docs/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="1.5" width="12" height="13" rx="1"/><path d="M5 5h6M5 8h6M5 11h3"/></svg>
+            View Interactive dbt Documentation
+          </a>
+        </div>
       </div>
       <div class="slip">
         <div class="slip-row"><span>Match Attempt #48213</span><span>Algorithm v2.1</span></div>
         <div class="slip-body">
           <div class="slip-rec"><b>CRM Account</b>Region: New York<br>Country: USA</div>
           <div class="slip-arrow">&#8644;</div>
-          <div class="slip-rec"><b>ZI Company</b>Region: Washington<br>Country: USA</div>
+          <div class="slip-rec"><b>Matched Company</b>Region: Washington<br>Country: USA</div>
         </div>
         <div class="slip-verdict">
           <span class="score">Confidence: 94 &middot; HIGH</span>
@@ -154,10 +181,59 @@
   </div>
 </header>
 
+<section id="context">
+  <div class="wrap">
+    <div class="grid-2">
+      <div class="card">
+        <h3>Project Overview</h3>
+        <p style="font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin:0;">This is an end-to-end analytics engineering project &mdash; a dbt + BigQuery pipeline (staging &rarr; intermediate &rarr; marts &rarr; platinum layers, 25 models) built to <b>diagnose what's driving customer complaints</b> about a B2B data-matching and enrichment product.</p>
+      </div>
+      <div class="card">
+        <h3>Business Problem</h3>
+        <p style="font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin:0;">Companies that run their sales and marketing off a CRM need that data to stay current as businesses merge, rebrand, or shut down. A common fix is an <b>enrichment service</b>: an algorithm matches each CRM record to its corresponding company profile in an external database, then keeps that record synced. The value only holds if two things are true &mdash; the match is correct, and the underlying company data is accurate. <b>Support and account teams have recently flagged a rise in match-quality complaints, and customer health metrics point to real retention risk.</b> This project investigates what's actually behind those complaints, and what to do about it.</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:20px;">
+      <div class="card">
+        <h3>Technology Stack</h3>
+        <div class="flow-row">
+          <span class="flow-pill"><span class="ico" style="background:var(--amber)"></span>BigQuery</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:var(--teal)"></span>dbt</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:var(--slate)"></span>SQL Modeling</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:var(--ink)"></span>GitHub Actions</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:#7C9B93"></span>GitHub Pages</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Project Architecture</h3>
+        <div class="flow-row">
+          <span class="flow-pill"><span class="ico" style="background:var(--slate)"></span>Source Data</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:#9BA6AD"></span>Staging</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:#7C9B93"></span>Intermediate</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:var(--teal)"></span>Marts</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:#1E4A40"></span>Platinum</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-pill"><span class="ico" style="background:var(--amber)"></span>Analytics Outputs</span>
+        </div>
+        <div class="flow-note"><a href="#">Explore the full dbt lineage graph &rarr;</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="kpi-strip">
   <div class="kpi-grid">
     <div class="kpi"><div class="num">75<span>%</span></div><div class="lbl">of all matches show a region mismatch</div><div class="foot">84% among matches with both regions on file &mdash; see Exhibit A</div></div>
-    <div class="kpi"><div class="num">83<span>%</span></div><div class="lbl">of ZI company records have an inconsistent city&#8594;region mapping</div></div>
+    <div class="kpi"><div class="num">83<span>%</span></div><div class="lbl">of matched company records have an inconsistent city&#8594;region mapping</div></div>
     <div class="kpi"><div class="num">17<span>%</span></div><div class="lbl">true manual-validation accuracy, checked against known defects</div></div>
     <div class="kpi"><div class="num">74<span> vs 96</span></div><div class="lbl">median match confidence, SMB vs. Enterprise</div></div>
   </div>
@@ -188,7 +264,7 @@
   <div class="wrap">
     <span class="exhibit-tab"><span class="dot"></span>Exhibit B &mdash; Company Data Quality</span>
     <h2 class="exhibit-title">The inconsistency is everywhere, evenly &mdash; and it shows no measurable relationship to the match defects in Exhibit A.</h2>
-    <p class="exhibit-dek">Every ZoomInfo company record was checked against an authoritative city&#8594;region reference. The problem isn't concentrated in one bad city's data &mdash; the inconsistency rate is essentially flat across all six, which points to a systemic issue rather than a localized one. It doesn't appear to be a primary driver of the match-level defects measured separately in Exhibit A.</p>
+    <p class="exhibit-dek">Every matched company record was checked against an authoritative city&#8594;region reference. The problem isn't concentrated in one bad city's data &mdash; the inconsistency rate is essentially flat across all six, which points to a systemic issue rather than a localized one. It doesn't appear to be a primary driver of the match-level defects measured separately in Exhibit A.</p>
     <div class="grid-2">
       <div class="card">
         <h3>City&#8594;region inconsistency rate, by city</h3>
