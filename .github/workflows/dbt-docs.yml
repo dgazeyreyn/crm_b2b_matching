@@ -70,6 +70,10 @@ jobs:
       - name: dbt deps
         run: dbt deps --profiles-dir ~/.dbt
 
+      - name: Check dbt version
+        run: |
+          dbt --version
+
       - name: dbt docs generate
         run: dbt docs generate --profiles-dir ~/.dbt
 
