@@ -73,6 +73,17 @@ jobs:
       - name: dbt docs generate
         run: dbt docs generate --profiles-dir ~/.dbt
 
+      - name: Verify dbt output
+        run: |
+          echo "---- current directory ----"
+          pwd
+
+          echo "---- files ----"
+          ls -la
+
+          echo "---- target directory ----"
+          ls -la target || true
+
       - name: Build published site
         run: |
           mkdir site
