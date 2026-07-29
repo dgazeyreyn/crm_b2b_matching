@@ -76,26 +76,26 @@ jobs:
       - name: Build published site
         run: |
           mkdir site
+
+          # Copy landing page
           cp index.html site/
-          [ -d css ] && cp -R css site/
-          [ -d js ] && cp -R js site/
-          [ -d assets ] && cp -R assets site/
-          [ -d images ] && cp -R images site/
-          cp -R target site/dbt-docs
+
+          # Copy dbt docs under a subdirectory
+          mkdir site/dbt-docs
+          cp -R target/* site/dbt-docs/
+
+          # Prevent GitHub Pages from processing dbt assets
           touch site/.nojekyll
 
-      # Confirm generated site contents before publishing
-      - name: Verify published site contents
-        run: |
-          echo "---- site structure ----"
-          find site -maxdepth 3 -type f | sort
-
-          echo "---- target structure ----"
-          find target -maxdepth 2 -type f | sort
-
-      - name: Deploy to GitHub Pages
+      - name: Deploy docs to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./site
           publish_branch: gh-pages
+
+      # Confirm generated site contents before publishing
+      - name: Verify published site contents
+        run: |
+          echo "---- site structure ----"
+          find site -maxdepth 2 -type f | sort
