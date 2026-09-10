@@ -1,5 +1,10 @@
 # Analytics Engineering Case Study: Data Quality, Match Accuracy, and Customer Trust
 
+## Preview
+
+[![case-file-style report](./assets/preview-screenshot.png)](https://dgazeyreyn.github.io/crm_b2b_matching/)
+_This preview is automatically updated via GitHub Actions._
+
 ## Overview
 
 This project is an end-to-end analytics engineering case study focused on **data quality, record matching accuracy, manual validation effectiveness, customer trust, and support signals** within a hypothetical B2B data enrichment context.
@@ -119,7 +124,7 @@ These models intentionally trade flexibility for clarity to support fast, accura
 
 ## Intended Outputs
 
-The final output of this project is a [case-file-style dashboard report](https://dgazeyreyn.github.io/crm_b2b_matching/) that:
+The final output of this project is a [case-file-style report](https://dgazeyreyn.github.io/crm_b2b_matching/) that:
 
 * Highlights systemic data and process failures
 * Quantifies customer and revenue exposure
