@@ -119,7 +119,7 @@ These models intentionally trade flexibility for clarity to support fast, accura
 
 ## Intended Outputs
 
-The final output of this project is a case-file-style dashboard report that:
+The final output of this project is a [case-file-style dashboard report](https://dgazeyreyn.github.io/crm_b2b_matching/) that:
 
 * Highlights systemic data and process failures
 * Quantifies customer and revenue exposure
